@@ -23,12 +23,12 @@
 				"alpha": 0
 			},
 			"coordinates": {
-				"left": 129.94921875,
-				"top": 74.578125,
-				"width": 119,
-				"height": 230.33203125
+				"left": 0,
+				"top": 88.77734375,
+				"width": 107,
+				"height": 146.33203125
 			},
-			"displayable_fields_count": 9
+			"displayable_fields_count": 5
 		},
 		"Passage": {
 			"color": {
@@ -38,8 +38,8 @@
 				"alpha": 0
 			},
 			"coordinates": {
-				"left": 467.8671875,
-				"top": 195.0625,
+				"left": 518.36328125,
+				"top": 217.703125,
 				"width": 124,
 				"height": 167.33203125
 			},
@@ -54,10 +54,43 @@
 					}
 				}
 			}
+		},
+		"Vector": {
+			"color": {
+				"red": 255,
+				"green": 255,
+				"blue": 255,
+				"alpha": 0
+			},
+			"coordinates": {
+				"left": 244.27734375,
+				"top": 51.55078125,
+				"width": 120.12109375,
+				"height": 167.33203125
+			},
+			"displayable_fields_count": 6,
+			"fields": {
+				"PassageID": {
+					"color": {
+						"red": 255,
+						"green": 255,
+						"blue": 255,
+						"alpha": 0
+					}
+				}
+			}
 		}
 	},
 	"relations": {
-		"D63896A9B724428EA534C180E105BB90": {
+		"90C75EB47EBF410E915EB5ABE10C05BC": {
+			"color": {
+				"red": 30,
+				"green": 30,
+				"blue": 30,
+				"alpha": 0
+			}
+		},
+		"2A8043EDE526491B96B26DF71F8981CD": {
 			"color": {
 				"red": 30,
 				"green": 30,

@@ -58,9 +58,9 @@ End for each
 //3787,5325
 
 var $model : Text
-$provider:="OpenAI"
+//$provider:="OpenAI"
 //$model:="gpt-5.4-mini"
-$model:="gpt-5.4"
+//$model:="gpt-5.4"
 //$provider:="Anthropic"
 //$model:="claude-sonnet-4-6"
 

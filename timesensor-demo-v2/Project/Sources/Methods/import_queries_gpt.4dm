@@ -5,14 +5,11 @@ $LLM:=cs:C1710.RemoteLLM.new("OpenAI")
 var $client : cs:C1710.AIKit.OpenAI
 $client:=cs:C1710.AIKit.OpenAI.new({baseURL: $LLM.baseURL; apiKey: $LLM.apiKey})
 
-var $clientLocal : cs:C1710.AIKit.OpenAI
-$clientLocal:=cs:C1710.AIKit.OpenAI.new({baseURL: "http://127.0.0.1:"+String:C10(Storage:C1525.port.embeddings)+"/v1"})
-
 var $model : Text
 $model:="text-embedding-3-small"
 
 var $file : 4D:C1709.File
-$file:=Folder:C1567("/DATA/synthetic queries/").file("OpenAI-gpt-5.4-batch-response.jsonl")
+$file:=Folder:C1567("/DATA/synthetic queries/GPT").file("OpenAI-gpt-5.4-batch-response.jsonl")
 
 var $jsonl : Collection
 $jsonl:=Split string:C1554($file.getText("utf-8"; Document with LF:K24:22); "\n")

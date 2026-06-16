@@ -3,7 +3,7 @@ $provider:="llama.cpp"
 
 $s:=ds:C1482.Search.query("vectors.meta.provider == :1"; $provider)
 
-$searches:=$s.slice(0; 10)
+$searches:=$s.slice(0; 100)
 $threshold:=0.6
 
 $stats:=[]

@@ -2,6 +2,19 @@
 <!DOCTYPE base SYSTEM "http://www.4d.com/dtd/2007/base.dtd" >
 <base name="timesensor-demo-v2" uuid="D9E9DA38D08C47FEAF14F2E645E5DFF9" collation_locale="en-gb">
 	<schema name="DEFAULT_SCHEMA"/>
+	<table name="Vector" uuid="59AAC06F1D5E464AA747AB81FDAC6562" id="1">
+		<field name="ID" uuid="94CD6006704B42C9A5083EEED38D460D" type="4" unique="true" autosequence="true" not_null="true" id="1"/>
+		<field name="embeddings" uuid="A841AE44B69D496F9CDC457E77360A06" type="21" blob_switch_size="2147483647" id="2">
+			<field_extra class_id="4D.Vector"/>
+		</field>
+		<field name="similarity" uuid="53521D33BBB244A68E4C02D8F4B316CC" type="6" id="3"/>
+		<field name="meta" uuid="898D5092AEAC477FB7B2BE3AC2A8266F" type="21" blob_switch_size="2147483647" id="4"/>
+		<field name="SearchID" uuid="BC29BECED8FC471097543223BF6C9EFA" type="4" id="5"/>
+		<field name="PassageID" uuid="4CDA7C95EEE049248B0354A747CCC642" type="4" id="6">
+			<field_extra multi_line="false"/>
+		</field>
+		<primary_key field_name="ID" field_uuid="94CD6006704B42C9A5083EEED38D460D"/>
+	</table>
 	<table name="Passage" uuid="C143AD88BAF440798D16D1519D81D168" id="2" prevent_journaling="true">
 		<field name="ID" uuid="7A3DA6F8C8CC4903BDF2828681A5DD55" type="4" unique="true" autosequence="true" not_null="true" id="1"/>
 		<field name="DocumentID" uuid="1CE53308E59F4ACCB1E2104939B9616B" type="4" id="2"/>
@@ -17,16 +30,10 @@
 	</table>
 	<table name="Search" uuid="5953B70661B9472B9AA2E0B9955A3CA7" id="3" prevent_journaling="true">
 		<field name="ID" uuid="C715FD8BAD7A41A68A28D27E4BAB98BD" type="4" unique="true" autosequence="true" not_null="true" id="1"/>
-		<field name="PassageID" uuid="4D429A80FF98426FBC0EFB6DD35CD9AF" type="4" id="2"/>
-		<field name="embeddings" uuid="B2FC8A129A364B0F8EA7FB4EA7CB1E82" type="21" blob_switch_size="2147483647" id="3">
-			<field_extra class_id="4D.Vector"/>
-		</field>
 		<field name="text" uuid="3488B1A14EB54B678D41822149F7AF82" type="10" id="4"/>
 		<field name="hash" uuid="998D6E1C3D0B4336B101E90B18CC624D" type="10" limiting_length="40" id="5"/>
 		<field name="language" uuid="ED396CE843A242CAAAF75FE98186FB9D" type="10" limiting_length="2" id="6"/>
 		<field name="positive" uuid="F94268F0037240C592071FDBB1D85659" type="1" id="7"/>
-		<field name="similarity" uuid="2CD1EA39C9A34A81B4A35F485FAECF41" type="6" id="8"/>
-		<field name="meta" uuid="0A051EBFBC9E49D082356CB70162BE22" type="21" blob_switch_size="2147483647" id="9"/>
 		<primary_key field_name="ID" field_uuid="C715FD8BAD7A41A68A28D27E4BAB98BD"/>
 	</table>
 	<table name="Full" uuid="7061FDD9B83C4859952280BAE285A1FC" id="4">
@@ -49,10 +56,22 @@
 			</field_ref>
 		</related_field>
 	</relation>
-	<relation uuid="D63896A9B724428EA534C180E105BB90" name_Nto1="passage" name_1toN="searches" state="1">
+	<relation uuid="2A8043EDE526491B96B26DF71F8981CD" name_Nto1="search" name_1toN="vectors" state="1">
 		<related_field kind="source">
-			<field_ref uuid="4D429A80FF98426FBC0EFB6DD35CD9AF" name="PassageID">
+			<field_ref uuid="BC29BECED8FC471097543223BF6C9EFA" name="SearchID">
+				<table_ref uuid="59AAC06F1D5E464AA747AB81FDAC6562" name="Vector"/>
+			</field_ref>
+		</related_field>
+		<related_field kind="destination">
+			<field_ref uuid="C715FD8BAD7A41A68A28D27E4BAB98BD" name="ID">
 				<table_ref uuid="5953B70661B9472B9AA2E0B9955A3CA7" name="Search"/>
+			</field_ref>
+		</related_field>
+	</relation>
+	<relation uuid="90C75EB47EBF410E915EB5ABE10C05BC" name_Nto1="passage" name_1toN="vectors" state="1">
+		<related_field kind="source">
+			<field_ref uuid="4CDA7C95EEE049248B0354A747CCC642" name="PassageID">
+				<table_ref uuid="59AAC06F1D5E464AA747AB81FDAC6562" name="Vector"/>
 			</field_ref>
 		</related_field>
 		<related_field kind="destination">
@@ -61,9 +80,19 @@
 			</field_ref>
 		</related_field>
 	</relation>
+	<index kind="regular" unique_keys="true" uuid="002B03753B374596950461A93354164A" type="7">
+		<field_ref uuid="94CD6006704B42C9A5083EEED38D460D" name="ID">
+			<table_ref uuid="59AAC06F1D5E464AA747AB81FDAC6562" name="Vector"/>
+		</field_ref>
+	</index>
 	<index kind="regular" uuid="01A6A85DC09048D29CAF6E7C432325E7" type="3">
 		<field_ref uuid="C9C7D46FC6784E65867B797A2D659CA9" name="meta">
 			<table_ref uuid="7061FDD9B83C4859952280BAE285A1FC" name="Full"/>
+		</field_ref>
+	</index>
+	<index kind="regular" uuid="11834C1224114C139360065BEA71AEE1" type="3">
+		<field_ref uuid="BC29BECED8FC471097543223BF6C9EFA" name="SearchID">
+			<table_ref uuid="59AAC06F1D5E464AA747AB81FDAC6562" name="Vector"/>
 		</field_ref>
 	</index>
 	<index kind="regular" uuid="1538D8DA520B4FD9931125C766AD76A3" type="3">
@@ -76,23 +105,18 @@
 			<table_ref uuid="7061FDD9B83C4859952280BAE285A1FC" name="Full"/>
 		</field_ref>
 	</index>
+	<index kind="regular" uuid="3E3BE77C4F3F4FF9AF009662BE5BB43E" type="3">
+		<field_ref uuid="898D5092AEAC477FB7B2BE3AC2A8266F" name="meta">
+			<table_ref uuid="59AAC06F1D5E464AA747AB81FDAC6562" name="Vector"/>
+		</field_ref>
+	</index>
 	<index kind="regular" unique_keys="true" uuid="7033743C6025410BAE2C51AFFF4ABF2D" type="7">
 		<field_ref uuid="7A3DA6F8C8CC4903BDF2828681A5DD55" name="ID">
 			<table_ref uuid="C143AD88BAF440798D16D1519D81D168" name="Passage"/>
 		</field_ref>
 	</index>
-	<index kind="regular" uuid="9AC19991652E46C487A42C21B3F536CE" type="3">
-		<field_ref uuid="0A051EBFBC9E49D082356CB70162BE22" name="meta">
-			<table_ref uuid="5953B70661B9472B9AA2E0B9955A3CA7" name="Search"/>
-		</field_ref>
-	</index>
 	<index kind="regular" unique_keys="true" uuid="9BB0531F8B2D46BF8C0F65BA28F6146F" type="7">
 		<field_ref uuid="C715FD8BAD7A41A68A28D27E4BAB98BD" name="ID">
-			<table_ref uuid="5953B70661B9472B9AA2E0B9955A3CA7" name="Search"/>
-		</field_ref>
-	</index>
-	<index kind="regular" uuid="A257014EA28146C688D505CB40057014" type="3">
-		<field_ref uuid="4D429A80FF98426FBC0EFB6DD35CD9AF" name="PassageID">
 			<table_ref uuid="5953B70661B9472B9AA2E0B9955A3CA7" name="Search"/>
 		</field_ref>
 	</index>
@@ -109,6 +133,11 @@
 	<index kind="regular" uuid="C19C5144385C4E56899F4BE8BB4576FB" type="3">
 		<field_ref uuid="F94268F0037240C592071FDBB1D85659" name="positive">
 			<table_ref uuid="5953B70661B9472B9AA2E0B9955A3CA7" name="Search"/>
+		</field_ref>
+	</index>
+	<index kind="regular" uuid="C2C3DCCB39954E25BB86D7CA40D0DF20" type="1">
+		<field_ref uuid="4CDA7C95EEE049248B0354A747CCC642" name="PassageID">
+			<table_ref uuid="59AAC06F1D5E464AA747AB81FDAC6562" name="Vector"/>
 		</field_ref>
 	</index>
 	<index kind="regular" uuid="E45E7635C4144E37A45D0F74C9E59D88" type="1">
