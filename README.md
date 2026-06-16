@@ -45,8 +45,8 @@ Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natur
 * **NDCG @10**: Did the matching document rank highly (preferably #1), or was it buried down at #10?
 
 |Sample|Match Rate|Average Rank
-|-|-|-|
-|`1000`|`0.455`|`2.3208`
+|-:|-:|-:|
+|`1000`|`0.455`|`2.320`
 |`100`|`0.370`|`2.621`
 
 ## Benchmark - BGE M3
@@ -62,3 +62,8 @@ Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natur
 ### 2. Calculate standard retrieval metrics:
 
 - Run the same tests to compare against the OpenAI model.
+
+|Sample|Match Rate|Average Rank
+|-:|-:|-:|
+|`1000`|`0.410`|`2.383`
+|`100`|``|`2`
