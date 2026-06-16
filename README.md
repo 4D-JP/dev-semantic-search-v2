@@ -24,7 +24,18 @@ The dataset is the public [**G4KMU/LEMUR**](https://huggingface.co/datasets/G4KM
 
 ## Benchmark - OpenAI
 
-- Use the OpenAI embedding model [`text-embedding-3-small`](https://developers.openai.com/api/docs/models/text-embedding-3-small) to convert the German, English, French documents (`3380` in total) to chunked embeddings. 
+### 1. Build the Haystack:
+
+- Import German, English, French documents (`3380` in total) from `full.jsonl`.
+- Use the OpenAI embedding model [`text-embedding-3-small`](https://developers.openai.com/api/docs/models/text-embedding-3-small) to generate embeddings in `1024` dimension, the same size as BAAI BGE M3.
 - Split the document in to chunks of `509` tokens using the `cl100k` base tokeniser (GTP-4, `100277` tokens) for chunking. [GGUF convered version](https://huggingface.co/keisuke-miyako/cl100k_tokenizer-gguf) has been prepared on Hugging Face.
-- Generate embeddings in `1024` dimension, the same size as BAAI BGE M3.
 - Check usage and cost.
+
+### 2. Generate the Queries
+
+Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natural-language user queries.
+
+### 3. Calculate standard retrieval metrics:
+
+* **Hit Rate @10**: Did the exact matching document from test.jsonl show up anywhere in the top 10 search results?
+* **NDCG @10**: Did the matching document rank highly (preferably #1), or was it buried down at #10?
