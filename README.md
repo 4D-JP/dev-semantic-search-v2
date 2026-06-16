@@ -41,7 +41,7 @@ Random queries from `full.jsonl`.
 
 |Queries|Model|Duration|Cost
 |-|-|-|-
-|`11361`|`gpt-5.4`||`$12.30`
+|`22722`|`gpt-5.4`||`$12.30`
 
 Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natural-language user queries.
 
