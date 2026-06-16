@@ -27,11 +27,11 @@ The dataset is the public [**G4KMU/LEMUR**](https://huggingface.co/datasets/G4KM
 ### 1. Build the Haystack:
 
 - Import German, English, French documents (`3380` in total) from `full.jsonl`.
-- Use the OpenAI embedding model [`text-embedding-3-small`](https://developers.openai.com/api/docs/models/text-embedding-3-small) to generate embeddings in `1024` dimension, the same size as BAAI BGE M3.
-- Split the document in to chunks of `509` tokens using the `cl100k` base tokeniser (GTP-4, `100277` tokens) for chunking. [GGUF convered version](https://huggingface.co/keisuke-miyako/cl100k_tokenizer-gguf) has been prepared on Hugging Face.
+- Split the document into chunks of `509` tokens using the `cl100k` base tokeniser (GTP-4, `100277` tokens) for chunking. [GGUF convered version](https://huggingface.co/keisuke-miyako/cl100k_tokenizer-gguf) has been prepared on Hugging Face.
+- Use the OpenAI embedding model [`text-embedding-3-small`](https://developers.openai.com/api/docs/models/text-embedding-3-small) to generate embeddings in `1024` dimensions, the same size as BAAI BGE M3.
 - Check usage and cost.
 
-### 2. Generate the Queries
+### 2. Generate the Queries:
 
 Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natural-language user queries.
 
@@ -39,3 +39,13 @@ Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natur
 
 * **Hit Rate @10**: Did the exact matching document from test.jsonl show up anywhere in the top 10 search results?
 * **NDCG @10**: Did the matching document rank highly (preferably #1), or was it buried down at #10?
+
+## Benchmark - BGE M3
+
+### 1. Build the Haystack:
+
+- Use the standard BGE M3 model to generate embeddings in `1024` dimensions from chunks of `509` tokens.
+
+### 2. Calculate standard retrieval metrics:
+
+- Run the same tests to compare against the OpenAI model.
