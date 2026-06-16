@@ -31,19 +31,13 @@ The dataset is the public [**G4KMU/LEMUR**](https://huggingface.co/datasets/G4KM
 - Use the OpenAI embedding model [`text-embedding-3-small`](https://developers.openai.com/api/docs/models/text-embedding-3-small) to generate embeddings in `1024` dimensions, the same size as BAAI BGE M3.
 - Check usage and cost.
 
-|Documents|Passages|Cost|
-|-|-|-|
-|`3380`|`75973`|`$0.75`|
-
 ### 2. Generate the Queries:
 
-Random queries from `full.jsonl`.
-
-|Queries|Model|Cost
-|-|-|-|
-|`22692`|`gpt-5.4`|`$12.30`
-
 Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natural-language user queries.
+
+|Queries|Documents|Passages|Cost|
+|-|-|-|-|
+|`22692`|`3380`|`75973`|`$13.05`|
 
 ### 3. Calculate standard retrieval metrics:
 
@@ -56,9 +50,9 @@ Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natur
 
 - Use the standard BGE M3 model to generate embeddings in `1024` dimensions from chunks of `509` tokens.
 
-|Documents|Passages|
-|-|-|
-|`3380`|`108190`|
+|Queries|Documents|Passages|
+|-|-|-|
+|`31900`|`3380`|`108190`|
 
 ### 2. Calculate standard retrieval metrics:
 
