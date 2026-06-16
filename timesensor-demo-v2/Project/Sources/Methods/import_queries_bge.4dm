@@ -69,6 +69,7 @@ For each ($line; $jsonl)
 			$search.text:=$text
 			$search.hash:=Generate digest:C1147($text; SHA1 digest:K66:2)
 			$search.save()
+			var $vector : cs:C1710.VectorEntity
 			$vector:=ds:C1482.Vector.new()
 			$vector.search:=$search
 			$vector.passage:=$passage

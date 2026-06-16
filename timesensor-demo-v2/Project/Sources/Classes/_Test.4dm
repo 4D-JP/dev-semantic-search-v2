@@ -7,12 +7,17 @@ property vector : 4D:C1709.Vector
 property duration : Real
 property _query : cs:C1710.SearchEntity
 property _defaultThreshold : Real
+property _provider : Text
+property _searches : cs:C1710.SearchSelection
 
 Class constructor
 	
 	This:C1470._defaultThreshold:=0.6
 	This:C1470.threshold:=This:C1470._defaultThreshold
 	This:C1470.positive:=False:C215
+	This:C1470._provider:="OpenAI"
+	This:C1470._provider:="llama.cpp"
+	This:C1470._searches:=ds:C1482.Search.query("vectors.meta.provider == :1"; This:C1470._provider)
 	
 Function onLoad($event : Object) : cs:C1710._Test
 	
@@ -50,11 +55,17 @@ Function onClicked($event : Object) : cs:C1710._Test
 Function changeDocument() : cs:C1710._Test
 	
 	var $searches : cs:C1710.SearchSelection
-	$searches:=ds:C1482.Search.query("positive == :1"; This:C1470.positive)
+	$searches:=This:C1470._searches.query("positive == :1"; This:C1470.positive)
 	This:C1470._query:=$searches.at(Random:C100%$searches.length)
 	Form:C1466.query:=This:C1470._query.text
 	If (This:C1470.positive)
-		This:C1470.document:=This:C1470._query.passage.document  //the document to match
+		var $vectors : cs:C1710.VectorSelection
+		$vectors:=This:C1470._query.vectors.query("meta.provider == :1"; This:C1470._provider)
+		ASSERT:C1129($vectors.length=1)
+		var $documents : cs:C1710.FullSelection
+		$documents:=$vectors.passage.document
+		ASSERT:C1129($documents.length=1)
+		This:C1470.document:=$documents.first()  //the document to match
 	Else 
 		This:C1470.document:=Null:C1517
 	End if 
@@ -90,7 +101,11 @@ Function search() : cs:C1710._Test
 		return 
 	End if 
 	
-	Form:C1466.vector:=This:C1470._query.embeddings
+	var $vectors : cs:C1710.VectorSelection
+	$vectors:=This:C1470._query.vectors.query("meta.provider == :1"; This:C1470._provider)
+	ASSERT:C1129($vectors.length=1)
+	
+	Form:C1466.vector:=$vectors.first().embeddings
 	Form:C1466.duration:=Null:C1517
 	Form:C1466.documents:=Null:C1517
 	
@@ -98,6 +113,7 @@ Function search() : cs:C1710._Test
 		window: Current form window:C827; \
 		formula: This:C1470.onSearch; \
 		vector: This:C1470.vector; \
+		provider: This:C1470._provider; \
 		threshold: This:C1470.threshold})
 	
 	return This:C1470
@@ -119,7 +135,7 @@ Function _search($params : Object)
 	$comparison:={vector: $params.vector; metric: mk cosine:K95:1; threshold: $params.threshold}
 	$documents:=ds:C1482.Full.query("passages.meta.provider == :1 "+\
 		" and meta.primary_language == :2 "+\
-		" and passages.embeddings > :3"; "OpenAI"; "en"; $comparison; $queryParams)
+		" and passages.embeddings > :3"; $params.provider; "en"; $comparison; $queryParams)
 	var $duration : Real
 	$duration:=Abs:C99(Milliseconds:C459-$start)/1000
 	CALL FORM:C1391($params.window; $params.formula; {documents: $documents; duration: $duration})
