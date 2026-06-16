@@ -26,10 +26,14 @@ The dataset is the public [**G4KMU/LEMUR**](https://huggingface.co/datasets/G4KM
 
 ### 1. Build the Haystack:
 
-- Import German, English, French documents (`3380` in total) from `full.jsonl`.
+- Import German, English, French documents from `full.jsonl`.
 - Split the document into chunks of `509` tokens using the `cl100k` base tokeniser (GTP-4, `100277` tokens) for chunking. [GGUF convered version](https://huggingface.co/keisuke-miyako/cl100k_tokenizer-gguf) has been prepared on Hugging Face.
 - Use the OpenAI embedding model [`text-embedding-3-small`](https://developers.openai.com/api/docs/models/text-embedding-3-small) to generate embeddings in `1024` dimensions, the same size as BAAI BGE M3.
 - Check usage and cost.
+
+|Documents|Passages|Cost
+|-|-|-
+|`3380`|`75973`|`$0.75`
 
 ### 2. Generate the Queries:
 
