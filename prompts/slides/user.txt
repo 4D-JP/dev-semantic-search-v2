@@ -1,9 +1,0 @@
-Passage from a German court decision:
-
-{PASSAGE}
-
-Using the legal subject matter of the passage above as inspiration, generate a slide deck in {LANGUAGE} dealing with the same or closely related legal situation.
-
-Do not reproduce or paraphrase the court text. Generate an original document from the perspective of the parties involved, not the court.
-
-Ignore any [REF] and [DATE] tokens in the seed passage.
