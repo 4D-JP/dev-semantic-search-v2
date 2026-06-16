@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Streaming Markdown Renderer</title>
+
+  <!-- highlight.js theme — swapped by JS based on color scheme -->
+  <link id="hljs-theme" rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" />
+
+  <style>
+    /* ── Tokens ──────────────────────────────────────────────── */
+    :root {
+      --bg:            #f6f8fa;
+      --surface:       #ffffff;
+      --surface-2:     #f0f2f5;
+      --border:        #d0d7de;
+      --border-light:  #e1e4e8;
+      --text:          #1f2328;
+      --text-muted:    #57606a;
+      --text-faint:    #8c959f;
+      --accent:        #0969da;
+      --accent-bg:     #dbeafe;
+      --pre-bg:        #161b22;
+      --pre-text:      #e6edf3;
+      --pre-border:    #30363d;
+      --blockquote:    #d0d7de;
+      --shadow:        0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
+      --radius:        8px;
+      --radius-lg:     12px;
+      --font-sans:     -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      --font-mono:     "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg:           #0d1117;
+        --surface:      #161b22;
+        --surface-2:    #21262d;
+        --border:       #30363d;
+        --border-light: #21262d;
+        --text:         #e6edf3;
+        --text-muted:   #8b949e;
+        --text-faint:   #6e7681;
+        --accent:       #58a6ff;
+        --accent-bg:    #1d3556;
+        --pre-bg:       #010409;
+        --pre-text:     #e6edf3;
+        --pre-border:   #30363d;
+        --blockquote:   #3d444d;
+        --shadow:       0 1px 3px rgba(0,0,0,.4);
+      }
+    }
+
+    /* ── Reset ───────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { font-size: 16px; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    /* ── Layout ──────────────────────────────────────────────── */
+    .page {
+      max-width: 860px;
+      margin: 0 auto;
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    /* ── Header ──────────────────────────────────────────────── */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .header h1 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .header h1 span.pill {
+      font-size: 11px;
+      font-weight: 500;
+      background: var(--accent-bg);
+      color: var(--accent);
+      border-radius: 20px;
+      padding: 2px 8px;
+      letter-spacing: .02em;
+    }
+
+    .theme-toggle {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 5px 12px;
+      font-size: 12px;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-family: var(--font-sans);
+      transition: background .15s;
+    }
+    .theme-toggle:hover { background: var(--surface-2); }
+
+    /* ── Controls bar ────────────────────────────────────────── */
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      font-size: 13px;
+      font-family: var(--font-sans);
+      font-weight: 500;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      transition: background .12s, opacity .12s;
+      white-space: nowrap;
+    }
+    .btn:hover:not(:disabled) { background: var(--surface-2); }
+    .btn:active:not(:disabled) { transform: scale(0.98); }
+    .btn:disabled { opacity: 0.45; cursor: default; }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: transparent;
+    }
+    .btn-primary:hover:not(:disabled) { opacity: 0.88; background: var(--accent); }
+
+    .speed-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .speed-wrap input[type=range] {
+      width: 90px;
+      accent-color: var(--accent);
+    }
+
+    /* ── Output card ─────────────────────────────────────────── */
+    .output-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      min-height: 200px;
+    }
+
+    .card-header {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .traffic-lights { display: flex; gap: 6px; }
+    .dot {
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--border);
+    }
+    .dot-r { background: #ff5f57; }
+    .dot-y { background: #febc2e; }
+    .dot-g { background: #28c840; }
+
+    .card-label {
+      font-size: 12px;
+      color: var(--text-faint);
+      font-family: var(--font-mono);
+    }
+
+    /* ── Markdown content ────────────────────────────────────── */
+    .md-output {
+      padding: 1.5rem;
+      font-size: 15px;
+      line-height: 1.75;
+      color: var(--text);
+      min-height: 160px;
+      overflow-wrap: break-word;
+      word-break: break-word;
+    }
+
+    .md-output.empty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-faint);
+      font-size: 13px;
+      min-height: 160px;
+    }
+
+    /* typography */
+    .md-output h1,
+    .md-output h2,
+    .md-output h3,
+    .md-output h4,
+    .md-output h5,
+    .md-output h6 {
+      margin: 1.4em 0 .5em;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+    .md-output h1 { font-size: 1.6em; padding-bottom: .35em; border-bottom: 1px solid var(--border-light); }
+    .md-output h2 { font-size: 1.3em; padding-bottom: .3em; border-bottom: 1px solid var(--border-light); }
+    .md-output h3 { font-size: 1.1em; }
+    .md-output h4 { font-size: 1em; }
+    .md-output h1:first-child,
+    .md-output h2:first-child { margin-top: 0; }
+
+    .md-output p { margin: .8em 0; }
+    .md-output p:first-child { margin-top: 0; }
+    .md-output p:last-child { margin-bottom: 0; }
+
+    .md-output strong { font-weight: 600; }
+    .md-output em { font-style: italic; }
+    .md-output del { text-decoration: line-through; color: var(--text-muted); }
+
+    .md-output a { color: var(--accent); text-decoration: none; }
+    .md-output a:hover { text-decoration: underline; }
+
+    /* lists */
+    .md-output ul,
+    .md-output ol {
+      padding-left: 1.5em;
+      margin: .5em 0;
+    }
+    .md-output li { margin: .3em 0; }
+    .md-output li > ul,
+    .md-output li > ol { margin: .2em 0; }
+
+    /* inline code */
+    .md-output :not(pre) > code {
+      font-family: var(--font-mono);
+      font-size: .875em;
+      background: var(--surface-2);
+      border: 1px solid var(--border-light);
+      border-radius: 4px;
+      padding: .1em .4em;
+      color: var(--text);
+    }
+
+    /* code blocks */
+    .md-output pre {
+      margin: 1em 0;
+      border-radius: var(--radius);
+      overflow: auto;
+      border: 1px solid var(--pre-border);
+      background: var(--pre-bg) !important;
+    }
+    .md-output pre code {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.6;
+      background: transparent !important;
+      border: none !important;
+      padding: 0 !important;
+      border-radius: 0 !important;
+      color: var(--pre-text);
+    }
+    .md-output pre .hljs {
+      background: var(--pre-bg) !important;
+      padding: 1rem 1.25rem;
+      border-radius: var(--radius);
+    }
+
+    /* code block with language label */
+    .md-output .code-wrap {
+      position: relative;
+    }
+    .md-output .code-lang {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--text-faint);
+      pointer-events: none;
+    }
+
+    /* blockquote */
+    .md-output blockquote {
+      border-left: 3px solid var(--blockquote);
+      margin: 1em 0;
+      padding: .1em 0 .1em 1em;
+      color: var(--text-muted);
+    }
+    .md-output blockquote p:first-child { margin-top: 0; }
+    .md-output blockquote p:last-child { margin-bottom: 0; }
+
+    /* table */
+    .md-output table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1em 0;
+      font-size: 14px;
+      display: block;
+      overflow-x: auto;
+    }
+    .md-output th,
+    .md-output td {
+      border: 1px solid var(--border);
+      padding: 6px 13px;
+      text-align: left;
+    }
+    .md-output th {
+      background: var(--surface-2);
+      font-weight: 600;
+    }
+    .md-output tr:nth-child(even) td { background: var(--surface-2); }
+
+    /* hr */
+    .md-output hr {
+      border: none;
+      border-top: 1px solid var(--border-light);
+      margin: 1.5em 0;
+    }
+
+    /* images */
+    .md-output img {
+      max-width: 100%;
+      border-radius: var(--radius);
+    }
+
+    /* ── Cursor ──────────────────────────────────────────────── */
+    .cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1em;
+      background: var(--text);
+      vertical-align: text-bottom;
+      border-radius: 1px;
+      animation: blink 1s step-end infinite;
+      margin-left: 1px;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* ── Code snippet card ───────────────────────────────────── */
+    .snippet-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .snippet-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface-2);
+      overflow-x: auto;
+    }
+
+    .tab {
+      padding: 9px 16px;
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      background: none;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+      font-family: var(--font-mono);
+      transition: color .12s;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+      background: var(--surface);
+    }
+
+    .snippet-body {
+      background: var(--pre-bg);
+    }
+
+    .snippet-body pre {
+      margin: 0;
+      padding: 1.25rem;
+      overflow-x: auto;
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .snippet-body code {
+      font-family: var(--font-mono);
+      color: var(--pre-text);
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Status bar ──────────────────────────────────────────── */
+    .status-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-faint);
+      padding: 0 2px;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .status-dot {
+      display: inline-block;
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--text-faint);
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .status-dot.streaming { background: #28c840; animation: pulse 1.2s ease infinite; }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+
+    /* ── Responsive ──────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      body { padding: 1rem .75rem; }
+      .speed-wrap { margin-left: 0; width: 100%; }
+      .md-output { padding: 1rem; }
+    }
+
+    /* ── Reduced motion ──────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      .cursor { animation: none; opacity: 1; }
+      .status-dot.streaming { animation: none; }
+    }
+  </style>
+</head>
+<body>
+
+<main class="page" role="main">
+
+  <!-- Header -->
+  <header class="header">
+    <h1>
+      Streaming Markdown Renderer
+      <span class="pill">marked.js + highlight.js</span>
+    </h1>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle color theme">
+      Toggle theme
+    </button>
+  </header>
+
+  <!-- Controls -->
+  <div class="controls" role="toolbar" aria-label="Stream controls">
+    <button class="btn btn-primary" id="btn-start">▶ Start stream</button>
+    <button class="btn" id="btn-reset" disabled>↺ Reset</button>
+    <div class="speed-wrap">
+      <label for="speed-slider" style="white-space:nowrap;">Speed</label>
+      <input type="range" id="speed-slider" min="5" max="120" value="35" step="5" />
+      <span id="speed-label">35 ms</span>
+    </div>
+  </div>
+
+  <!-- Output -->
+  <section aria-label="Rendered output">
+    <div class="output-card">
+      <div class="card-header">
+        <div class="traffic-lights" aria-hidden="true">
+          <span class="dot dot-r"></span>
+          <span class="dot dot-y"></span>
+          <span class="dot dot-g"></span>
+        </div>
+        <span class="card-label">output.md</span>
+      </div>
+      <div class="md-output empty" id="output" aria-live="polite" aria-label="Markdown output">
+        Click "Start stream" to see markdown render in real time…
+      </div>
+    </div>
+  </section>
+
+  <!-- Status -->
+  <div class="status-bar">
+    <div>
+      <span class="status-dot" id="status-dot" aria-hidden="true"></span>
+      <span id="status-text">Idle</span>
+    </div>
+    <div id="char-count" aria-live="polite">0 chars</div>
+  </div>
+
+  <!-- Code snippets -->
+  <section class="snippet-card" aria-label="Integration code">
+    <div class="snippet-tabs" role="tablist">
+      <button class="tab active" role="tab" aria-selected="true"  data-tab="setup">setup</button>
+      <button class="tab"        role="tab" aria-selected="false" data-tab="render">renderMarkdown()</button>
+      <button class="tab"        role="tab" aria-selected="false" data-tab="fetch">fetch stream</button>
+    </div>
+
+    <div class="snippet-body">
+
+      <div class="tab-panel active" id="tab-setup">
+        <pre><code class="language-html">&lt;!-- 1. highlight.js theme in &lt;head&gt; --&gt;
+&lt;link id="hljs-theme" rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" /&gt;
+
+&lt;!-- 2. Libraries before &lt;/body&gt; --&gt;
+&lt;script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.0/marked.min.js"&gt;&lt;/script&gt;
+&lt;script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"&gt;&lt;/script&gt;
+
+&lt;!-- 3. Dark mode: swap theme based on prefers-color-scheme --&gt;
+&lt;script&gt;
+  const theme = window.matchMedia('(prefers-color-scheme: dark)').matches
+    ? 'github-dark' : 'github';
+  document.getElementById('hljs-theme').href =
+    `https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/${theme}.min.css`;
+&lt;/script&gt;</code></pre>
+      </div>
+
+      <div class="tab-panel" id="tab-render">
+        <pre><code class="language-javascript">// Configure once at startup
+marked.use({ gfm: true, breaks: true });
+
+/**
+ * Re-render accumulated markdown into a container element.
+ * Call this on every incoming chunk from the LLM stream.
+ *
+ * @param {string}      partial   - Full accumulated markdown so far
+ * @param {HTMLElement} container - The DOM element to render into
+ */
+function renderMarkdown(partial, container) {
+  container.innerHTML = marked.parse(partial);
+
+  // Syntax-highlight every code block
+  container.querySelectorAll('pre code').forEach(block => {
+    hljs.highlightElement(block);
+  });
+}
+
+// Inject chunks as they arrive:
+let accumulated = '';
+
+function onChunk(chunk) {
+  accumulated += chunk;
+  renderMarkdown(accumulated, document.getElementById('output'));
+}
+
+// On stream end, do a final clean render (no cursor):
+function onDone() {
+  renderMarkdown(accumulated, document.getElementById('output'));
+}</code></pre>
+      </div>
+
+      <div class="tab-panel" id="tab-fetch">
+        <pre><code class="language-javascript">// Anthropic streaming via fetch (works with any OpenAI-compatible API too)
+async function streamCompletion(prompt, outputEl) {
+  let accumulated = '';
+
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type':         'application/json',
+      'x-api-key':            YOUR_API_KEY,
+      'anthropic-version':    '2023-06-01',
+    },
+    body: JSON.stringify({
+      model:      'claude-opus-4-6',
+      max_tokens: 2048,
+      stream:     true,
+      messages:   [{ role: 'user', content: prompt }],
+    }),
+  });
+
+  const reader  = res.body.getReader();
+  const decoder = new TextDecoder();
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    const lines = decoder.decode(value).split('\n');
+    for (const line of lines) {
+      if (!line.startsWith('data:')) continue;
+      try {
+        const json = JSON.parse(line.slice(5).trim());
+        const delta = json?.delta?.text ?? '';
+        if (!delta) continue;
+
+        accumulated += delta;
+        renderMarkdown(accumulated, outputEl); // &lt;-- your render fn
+      } catch { /* partial JSON line, skip */ }
+    }
+  }
+
+  // Final clean render
+  renderMarkdown(accumulated, outputEl);
+}</code></pre>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.0/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>
+/* ── Dark-mode theme swap ──────────────────────────────────── */
+const mq = window.matchMedia('(prefers-color-scheme: dark)');
+function applyHljsTheme(dark) {
+  document.getElementById('hljs-theme').href = dark
+    ? 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css'
+    : 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css';
+}
+applyHljsTheme(mq.matches);
+mq.addEventListener('change', e => applyHljsTheme(e.matches));
+
+/* Manual theme toggle (overrides system) */
+let manualDark = null;
+document.getElementById('theme-toggle').addEventListener('click', () => {
+  manualDark = (manualDark === null) ? !mq.matches : !manualDark;
+  applyHljsTheme(manualDark);
+  document.documentElement.style.setProperty(
+    'color-scheme', manualDark ? 'dark' : 'light'
+  );
+});
+
+/* ── Marked config ─────────────────────────────────────────── */
+marked.use({ gfm: true, breaks: true });
+
+/* ── Render function ───────────────────────────────────────── */
+function renderMarkdown(partial, container) {
+  container.innerHTML = marked.parse(partial);
+  container.querySelectorAll('pre code').forEach(block => {
+    hljs.highlightElement(block);
+  });
+}
+
+/* ── Sample content ────────────────────────────────────────── */
+const SAMPLE = `## What is streaming markdown?
+
+When an LLM responds token-by-token, you can render each chunk **as it arrives** — giving users instant visual feedback instead of waiting for the full response.
+
+### How it works
+
+1. Accumulate chunks into a single string
+2. Re-parse the full string with **marked.js** on every chunk
+3. Re-highlight code blocks with **highlight.js**
+4. Replace \`innerHTML\` — the DOM diff is cheap
+
+The full re-parse sounds expensive, but marked processes ~1 MB/sec. Typical completions are a few KB at most.
+
+---
+
+### Code example
+
+\`\`\`python
+import anthropic
+
+client = anthropic.Anthropic()
+
+with client.messages.stream(
+    model="claude-opus-4-6",
+    max_tokens=1024,
+    messages=[{"role": "user", "content": "Hello!"}]
+) as stream:
+    for text in stream.text_stream:
+        print(text, end="", flush=True)
+\`\`\`
+
+### Tips
+
+- **Debounce** to ~16 ms if token rate exceeds ~100/sec
+- Partial code fences render as plain \`<pre>\` until the closing \`\`\`\` arrives — this is fine in practice
+- Sanitize with **DOMPurify** if rendering untrusted content
+- The cursor blinks inside the last rendered paragraph automatically
+
+> Streaming feels fast even when it isn't — the progressive reveal is the UX.
+
+### Comparison
+
+| Library   | Size (min+gz) | Streaming-safe | GFM tables |
+|-----------|:-------------:|:--------------:|:----------:|
+| marked    | ~6 KB         | ✓              | ✓          |
+| markdown-it | ~15 KB      | ✓              | plugin     |
+| showdown  | ~18 KB        | ✓              | ✓          |
+| remark    | ~35 KB        | requires work  | plugin     |
+`;
+
+/* ── Stream simulation ─────────────────────────────────────── */
+const outputEl   = document.getElementById('output');
+const btnStart   = document.getElementById('btn-start');
+const btnReset   = document.getElementById('btn-reset');
+const statusDot  = document.getElementById('status-dot');
+const statusText = document.getElementById('status-text');
+const charCount  = document.getElementById('char-count');
+const speedSlider = document.getElementById('speed-slider');
+const speedLabel  = document.getElementById('speed-label');
+
+let streamTimer   = null;
+let accumulated   = '';
+let charIndex     = 0;
+
+speedSlider.addEventListener('input', () => {
+  speedLabel.textContent = speedSlider.value + ' ms';
+});
+
+function setStatus(state) {
+  statusDot.className = 'status-dot' + (state === 'streaming' ? ' streaming' : '');
+  statusText.textContent = state === 'streaming' ? 'Streaming…'
+                         : state === 'done'      ? 'Done'
+                         :                         'Idle';
+}
+
+function startStream() {
+  btnStart.disabled = true;
+  btnReset.disabled = false;
+  outputEl.classList.remove('empty');
+  accumulated = '';
+  charIndex   = 0;
+  setStatus('streaming');
+
+  streamTimer = setInterval(() => {
+    const chunkSize  = Math.floor(Math.random() * 8) + 2;
+    const chunk      = SAMPLE.slice(charIndex, charIndex + chunkSize);
+    accumulated     += chunk;
+    charIndex       += chunkSize;
+
+    renderMarkdown(accumulated, outputEl);
+
+    // append blinking cursor
+    const cursor = document.createElement('span');
+    cursor.className = 'cursor';
+    cursor.setAttribute('aria-hidden', 'true');
+    outputEl.appendChild(cursor);
+
+    charCount.textContent = accumulated.length + ' chars';
+
+    if (charIndex >= SAMPLE.length) {
+      clearInterval(streamTimer);
+      streamTimer = null;
+      renderMarkdown(SAMPLE, outputEl); // final clean render
+      charCount.textContent = SAMPLE.length + ' chars';
+      setStatus('done');
+      btnStart.disabled = false;
+      btnStart.textContent = '▶ Stream again';
+    }
+  }, parseInt(speedSlider.value));
+}
+
+function resetStream() {
+  if (streamTimer) { clearInterval(streamTimer); streamTimer = null; }
+  accumulated = '';
+  charIndex   = 0;
+  outputEl.innerHTML = 'Click "Start stream" to see markdown render in real time…';
+  outputEl.classList.add('empty');
+  charCount.textContent = '0 chars';
+  setStatus('idle');
+  btnStart.disabled = false;
+  btnStart.textContent = '▶ Start stream';
+  btnReset.disabled = true;
+}
+
+btnStart.addEventListener('click', startStream);
+btnReset.addEventListener('click', resetStream);
+
+/* ── Snippet tabs ──────────────────────────────────────────── */
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => {
+      t.classList.remove('active');
+      t.setAttribute('aria-selected', 'false');
+    });
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    tab.setAttribute('aria-selected', 'true');
+    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+/* ── Highlight snippet code blocks ─────────────────────────── */
+document.querySelectorAll('.snippet-body pre code').forEach(block => {
+  hljs.highlightElement(block);
+});
+</script>
+</body>
+</html>
