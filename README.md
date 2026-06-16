@@ -57,6 +57,10 @@ Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natur
 
 - Use the standard BGE M3 model to generate embeddings in `1024` dimensions from chunks of `509` tokens.
 
+|Documents|Passages|
+|-|-|
+|`3380`|`75973`|
+
 ### 2. Calculate standard retrieval metrics:
 
 - Run the same tests to compare against the OpenAI model.
