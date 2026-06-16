@@ -6,10 +6,6 @@ Custom Embedding Model
 
 The dataset is the public [**G4KMU/LEMUR**](https://huggingface.co/datasets/G4KMU/LEMUR) collection. It is primarily a large-scale multilingual legal corpus explicitly designed for the robust fine-tuning of multilingual law embedding models for legal document retrieval.
 
-Here is a breakdown of its core components, methodologies, and use cases:
-
----
-
 ### 1. Structure & Core Specifications
 
 * **The Source Material:** It is constructed from **24,953 official EUR-Lex PDF documents** focusing heavily on EU environmental legislation.
