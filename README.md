@@ -44,6 +44,11 @@ Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natur
 * **Hit Rate @10**: Did the exact matching document from `test.jsonl` show up anywhere in the top 10 search results?
 * **NDCG @10**: Did the matching document rank highly (preferably #1), or was it buried down at #10?
 
+|Sample|Match Rate|Average Rank
+|-|-|-|
+|`1000`|`0.455`|`2.3208`
+|`100`|`0.370`|`2.621`
+
 ## Benchmark - BGE M3
 
 ### 1. Build the Haystack:
