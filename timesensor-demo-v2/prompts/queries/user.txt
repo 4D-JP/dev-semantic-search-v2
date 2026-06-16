@@ -1,0 +1,11 @@
+## Parameters
+
+- **Number of Pairs to Generate**: $4dtext($1.n)
+
+Each query at each relevance level should be materially different, not just paraphrases 
+
+- **Language**: $4dtext($1.language)
+
+- **Target Passage:**
+
+$4dtext($1.text)
