@@ -23,29 +23,35 @@ Function continueConversation($messages : Collection) : cs:C1710.AIKit.OpenAICha
 	
 	var $response_format:={type: "json_schema"; json_schema: {}}
 	$response_format.json_schema:={}
-	$response_format.json_schema.name:="Queries"
+	$response_format.json_schema.name:="Pairs"
 	$response_format.json_schema.strict:=True:C214
 	$response_format.json_schema.schema:={}
 	$response_format.json_schema.schema.type:="array"
 	
 	$response_format.json_schema.schema.items:={}
 	$response_format.json_schema.schema.items.type:="object"
-	$response_format.json_schema.schema.items.required:=["text"; "language"; "relevance"]
+	$response_format.json_schema.schema.items.required:=["pair_id"; "passage_language"; "query_language"; "positive_query"; "hard_negative"]
 	$response_format.json_schema.schema.items.additionalProperties:=False:C215
 	$response_format.json_schema.schema.items.properties:={}
 	
-	$response_format.json_schema.schema.items.properties.text:={}
-	$response_format.json_schema.schema.items.properties.text.type:="string"
+	$response_format.json_schema.schema.items.properties.pair_id:={}
+	$response_format.json_schema.schema.items.properties.pair_id.type:="integer"
 	
-	$response_format.json_schema.schema.items.properties.language:={}
-	$response_format.json_schema.schema.items.properties.language.type:="string"
-	$response_format.json_schema.schema.items.properties.language.enum:=["en"; "fr"; "de"; "es"; "pt"; "ja"]
+	$response_format.json_schema.schema.items.properties.passage_language:={}
+	$response_format.json_schema.schema.items.properties.passage_language.type:="string"
+	$response_format.json_schema.schema.items.properties.passage_language.enum:=["en"; "fr"; "de"]
 	
-	$response_format.json_schema.schema.items.properties.relevance:={}
-	$response_format.json_schema.schema.items.properties.relevance.type:="integer"
-	$response_format.json_schema.schema.items.properties.relevance.enum:=[0; 1; 2; 3]
+	$response_format.json_schema.schema.items.properties.query_language:={}
+	$response_format.json_schema.schema.items.properties.query_language.type:="string"
+	$response_format.json_schema.schema.items.properties.query_language.enum:=["en"; "fr"; "de"]
 	
-	$ChatCompletionsParameters.response_format:=$response_format
+	$response_format.json_schema.schema.items.properties.positive_query:={}
+	$response_format.json_schema.schema.items.properties.positive_query.type:="string"
+	
+	$response_format.json_schema.schema.items.properties.hard_negative:={}
+	$response_format.json_schema.schema.items.properties.hard_negative.type:="string"
+	
+	//$ChatCompletionsParameters.response_format:=$response_format
 	
 	var $ChatCompletionsResult : cs:C1710.AIKit.OpenAIChatCompletionsResult
 	$ChatCompletionsResult:=This:C1470.OpenAI.chat.completions.create($messages; $ChatCompletionsParameters)

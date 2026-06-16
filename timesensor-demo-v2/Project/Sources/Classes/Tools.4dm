@@ -56,8 +56,8 @@ Function KnowledgeBase($arguments : Object) : Object
 		$vector:=$batch.embedding.embedding
 		var $queryParams : Object
 		$queryParams:={queryPath: True:C214; queryPlan: True:C214}
-		var $documents : cs:C1710.DocumentSelection
-		$documents:=ds:C1482.Document.query("meta.version == :1"+\
+		var $documents : cs:C1710.FullSelection
+		$documents:=ds:C1482.Full.query("meta.version == :1"+\
 			" and meta.language == :2"; $version; $language; $queryParams)
 		var $comparison : Object
 		var $threshold : Real
