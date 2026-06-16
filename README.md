@@ -58,7 +58,7 @@ Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natur
 
 |Documents|Passages|
 |-|-|
-|`3380`|`75973`|
+|`3380`|`108190`|
 
 ### 2. Calculate standard retrieval metrics:
 
