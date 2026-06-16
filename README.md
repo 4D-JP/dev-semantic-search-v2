@@ -39,9 +39,9 @@ The dataset is the public [**G4KMU/LEMUR**](https://huggingface.co/datasets/G4KM
 
 Random queries from `full.jsonl`.
 
-|Queries|Model|Duration|Cost
-|-|-|-|-
-|`22722`|`gpt-5.4`||`$12.30`
+|Queries|Model|Cost
+|-|-|-|
+|`22722`|`gpt-5.4`|`$12.30`
 
 Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natural-language user queries.
 
