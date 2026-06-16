@@ -66,4 +66,4 @@ Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natur
 |Sample|Match Rate|Average Rank
 |-:|-:|-:|
 |`1000`|`0.410`|`2.383`
-|`100`|``|`2`
+|`100`|`0.360`|`2.750`
