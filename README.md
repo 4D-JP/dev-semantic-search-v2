@@ -31,11 +31,17 @@ The dataset is the public [**G4KMU/LEMUR**](https://huggingface.co/datasets/G4KM
 - Use the OpenAI embedding model [`text-embedding-3-small`](https://developers.openai.com/api/docs/models/text-embedding-3-small) to generate embeddings in `1024` dimensions, the same size as BAAI BGE M3.
 - Check usage and cost.
 
-|Documents|Passages|Cost
-|-|-|-
-|`3380`|`75973`|`$0.75`
+|Documents|Passages|Cost|
+|-|-|-|
+|`3380`|`75973`|`$0.75`|
 
 ### 2. Generate the Queries:
+
+Random queries from `full.jsonl`.
+
+|Queries|Model|Duration|Cost
+|-|-|-|-
+|`3000`|`gpt-5.4`|`00:20`|`$4.42`
 
 Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natural-language user queries.
 
