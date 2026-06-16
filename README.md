@@ -24,7 +24,6 @@ The dataset is the public [**G4KMU/LEMUR**](https://huggingface.co/datasets/G4KM
 
 ## Benchmark
 
-Use the OpenAI embedding model [`text-embedding-3-small`](https://developers.openai.com/api/docs/models/text-embedding-3-small) to convert the German, English, French documents (`3380` in total) to chunked embeddings. 
-
-Use the `cl100k` base tokeniser (GTP-4, `100277` tokens) for chunking. A [GGUF convered version](https://huggingface.co/keisuke-miyako/cl100k_tokenizer-gguf) has been prepared on Hugging Face.
-
+- Use the OpenAI embedding model [`text-embedding-3-small`](https://developers.openai.com/api/docs/models/text-embedding-3-small) to convert the German, English, French documents (`3380` in total) to chunked embeddings. 
+- Split the document in to chunks of `509` tokens using the `cl100k` base tokeniser (GTP-4, `100277` tokens) for chunking. [GGUF convered version](https://huggingface.co/keisuke-miyako/cl100k_tokenizer-gguf) has been prepared on Hugging Face.
+- Generate embeddings in `1024` dimension, the same size as BAAI BGE M3.
