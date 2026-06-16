@@ -1,5 +1,20 @@
 {
 	"tables": {
+		"Full": {
+			"color": {
+				"red": 255,
+				"green": 255,
+				"blue": 255,
+				"alpha": 0
+			},
+			"coordinates": {
+				"left": 741.43359375,
+				"top": 102.1171875,
+				"width": 84,
+				"height": 104.33203125
+			},
+			"displayable_fields_count": 3
+		},
 		"Search": {
 			"color": {
 				"red": 255,
@@ -11,7 +26,7 @@
 				"left": 129.94921875,
 				"top": 74.578125,
 				"width": 119,
-				"height": 247.87109375
+				"height": 230.33203125
 			},
 			"displayable_fields_count": 9
 		},
@@ -23,12 +38,12 @@
 				"alpha": 0
 			},
 			"coordinates": {
-				"left": 406.25390625,
-				"top": 236.7109375,
+				"left": 467.8671875,
+				"top": 195.0625,
 				"width": 124,
-				"height": 146.33203125
+				"height": 167.33203125
 			},
-			"displayable_fields_count": 5,
+			"displayable_fields_count": 6,
 			"fields": {
 				"hash": {
 					"color": {
@@ -39,21 +54,6 @@
 					}
 				}
 			}
-		},
-		"Document": {
-			"color": {
-				"red": 255,
-				"green": 255,
-				"blue": 255,
-				"alpha": 0
-			},
-			"coordinates": {
-				"left": 663.3046875,
-				"top": 39.60546875,
-				"width": 85,
-				"height": 104.33203125
-			},
-			"displayable_fields_count": 3
 		}
 	},
 	"relations": {
@@ -65,7 +65,7 @@
 				"alpha": 0
 			}
 		},
-		"528CC67102AB42E98C1704D317F843C0": {
+		"0950F7340E464964B922538C784E683D": {
 			"color": {
 				"red": 30,
 				"green": 30,
