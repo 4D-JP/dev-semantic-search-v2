@@ -5,6 +5,9 @@ $LLM:=cs:C1710.RemoteLLM.new("OpenAI")
 var $client : cs:C1710.AIKit.OpenAI
 $client:=cs:C1710.AIKit.OpenAI.new({baseURL: $LLM.baseURL; apiKey: $LLM.apiKey})
 
+var $clientLocal : cs:C1710.AIKit.OpenAI
+$clientLocal:=cs:C1710.AIKit.OpenAI.new({baseURL: "http://127.0.0.1:"+String:C10(Storage:C1525.port.embeddings)+"/v1"})
+
 var $model : Text
 $model:="text-embedding-3-small"
 
@@ -71,23 +74,28 @@ For each ($line; $jsonl)
 			$search.positive:=True:C214
 			$search.text:=$text
 			$search.hash:=Generate digest:C1147($text; SHA1 digest:K66:2)
-			$search.passage:=$passage
-			$search.embeddings:=$batch.embeddings[0].embedding
-			$search.similarity:=$search.embeddings.cosineSimilarity($search.passage.embeddings)
-			$search.meta:={model: "gpt-5.4"; provider: "OpenAI"}
 			$search.save()
-			
+			$vector:=ds:C1482.Vector.new()
+			$vector.search:=$search
+			$vector.passage:=$passage
+			$vector.embeddings:=$batch.embeddings[0].embedding
+			$vector.similarity:=$vector.embeddings.cosineSimilarity($vector.passage.embeddings)
+			$vector.meta:={model: "gpt-5.4"; provider: "OpenAI"}
+			$vector.save()
 			$text:=$result.hard_negative
 			$search:=ds:C1482.Search.new()
 			$search.language:=$result.query_language
 			$search.positive:=False:C215
 			$search.text:=$text
 			$search.hash:=Generate digest:C1147($text; SHA1 digest:K66:2)
-			$search.passage:=$passage
-			$search.embeddings:=$batch.embeddings[1].embedding
-			$search.similarity:=$search.embeddings.cosineSimilarity($search.passage.embeddings)
-			$search.meta:={model: "gpt-5.4"; provider: "OpenAI"}
 			$search.save()
+			$vector:=ds:C1482.Vector.new()
+			$vector.search:=$search
+			$vector.passage:=$passage
+			$vector.embeddings:=$batch.embeddings[1].embedding
+			$vector.similarity:=$vector.embeddings.cosineSimilarity($vector.passage.embeddings)
+			$vector.meta:={model: "gpt-5.4"; provider: "OpenAI"}
+			$vector.save()
 		End if 
 	End for each 
 End for each 

@@ -6,6 +6,9 @@ used to generate training dataset
 
 */
 
+var $provider : Text
+$provider:="llama.cpp"
+
 var $folder : 4D:C1709.Folder
 $folder:=Folder:C1567("/PACKAGE/prompts/queries")
 ASSERT:C1129($folder.exists)
@@ -47,19 +50,19 @@ For each ($lang; $langs)
 		var $fulls : cs:C1710.FullSelection
 		$fulls:=ds:C1482.Full.query("meta.pdf_path == :1"; $json.pdf_path)
 		ASSERT:C1129($fulls.length=1)
-		For each ($passage; $fulls.passages)
+		For each ($passage; $fulls.passages.query("meta.provider == :1"; $provider))
 			$passages.add($passage)
 		End for each 
 	End for each 
 End for each 
-//3787
+//3787,5325
 
-var $provider; $model : Text
+var $model : Text
 $provider:="OpenAI"
 //$model:="gpt-5.4-mini"
 $model:="gpt-5.4"
-$provider:="Anthropic"
-$model:="claude-sonnet-4-6"
+//$provider:="Anthropic"
+//$model:="claude-sonnet-4-6"
 
 For each ($passage; $passages)
 	var $language; $text : Text
