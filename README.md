@@ -41,14 +41,13 @@ Random queries from `full.jsonl`.
 
 |Queries|Model|Duration|Cost
 |-|-|-|-
-|`3000`|`gpt-5.4`|`00:20`|`$4.42`
 |`11361`|`gpt-5.4`||`$12.30`
 
 Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natural-language user queries.
 
 ### 3. Calculate standard retrieval metrics:
 
-* **Hit Rate @10**: Did the exact matching document from test.jsonl show up anywhere in the top 10 search results?
+* **Hit Rate @10**: Did the exact matching document from `test.jsonl` show up anywhere in the top 10 search results?
 * **NDCG @10**: Did the matching document rank highly (preferably #1), or was it buried down at #10?
 
 ## Benchmark - BGE M3
