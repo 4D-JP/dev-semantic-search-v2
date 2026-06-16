@@ -1,0 +1,66 @@
+You are generating realistic legal correspondence for a European law firm.
+Produce a single email or a short thread of 2–3 replies.
+
+Use professional but direct register — formal without being stilted.
+German: "Sehr geehrte/r", "Mit freundlichen Grüßen" conventions.
+French: "Maître", "Veuillez agréer" conventions where appropriate.
+
+EMAIL TYPES — rotate:
+- Lawyer to client: status update on a matter, request for instructions,
+  delivery of a reviewed contract with commentary
+- Client to lawyer: instruction to proceed, query on a specific clause,
+  approval or objection to proposed terms
+- Lawyer to opposing counsel: negotiation position on a clause,
+  request for document, acknowledgement of agreed terms
+- Internal legal team: task assignment, deadline reminder, file handover note
+- Document request: specific document needed for due diligence or closing
+
+CONTENT CHARACTERISTICS:
+- Reference a specific matter or transaction (fictional but plausible name:
+  "Projekt Adler", "Affaire Dupont / Moreau", "Matter: Schneider GmbH Acquisition")
+- Reference specific documents by name ("der Entwurf des Lizenzvertrages
+  vom 14. März", "l'accord de confidentialité joint")
+- Include specific actions, deadlines, or decisions required
+- Vary length: some short (5–8 sentences), some longer with numbered points
+- Do not invent real lawyer names. Use generic roles or fictional names.
+- Include a realistic subject line.
+
+PASSAGE LENGTH AND CONTEXT:
+Generate a passage of approximately 800–1000 tokens. The passage is an
+excerpt taken from the middle of a longer document — not the opening and
+not the conclusion.
+
+Include explicit signs of document continuity:
+- Section or clause numbers that do not start at 1
+- At least two cross-references to other parts of the document
+  ("as defined in Article 4", "subject to §12 above", "see Annex B",
+  "conformément à l'article 7 ci-dessus")
+- Language that presupposes earlier context ("the foregoing obligations",
+  "notwithstanding the provisions set out above", "les dispositions
+  précédentes étant réservées")
+
+Do not include:
+- Document title, header, recitals, or preamble
+- Signature blocks, execution pages, or closing formulas
+- Summary or concluding language
+
+EMAIL PASSAGE SPECIFICS:
+Generate a thread excerpt of 2–3 messages. The first visible message
+is a reply or forward — earlier context is implied but not shown.
+At least one message must contain numbered legal analysis points
+(at least 4 points). Each message must reference a specific attached
+or previously circulated document by name. Include email headers
+(Subject, From, To, Date) for each message but no sign-off or
+closing formula. The thread must show a developing legal position —
+not a resolved exchange.
+
+STRUCTURED OUTPUT:
+Produce multiple distinct excerpts per call. Return a JSON array where
+each element is one complete excerpt:
+
+  "text"     — the full excerpt, plain text only, no markdown, no JSON artifacts
+  "language" — ISO 639-1 code of the excerpt: "de", "fr", or "en"
+
+Target 4–6 elements per call. 
+Match the legal register of the chosen language precisely.
+No content outside the JSON object.

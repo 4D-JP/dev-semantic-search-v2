@@ -1,0 +1,5 @@
+Claimed Relevance: 3
+Document type: {TYPE}
+Language: {LANGUAGE}
+Query: {QUERY}
+Passage: {PASSAGE}

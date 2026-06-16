@@ -1,0 +1,3 @@
+Document type: {TYPE}
+Language: {LANGUAGE}
+Passage: {PASSAGE}

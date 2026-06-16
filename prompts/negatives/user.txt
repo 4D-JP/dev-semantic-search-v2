@@ -1,0 +1,5 @@
+Document type: {TYPE}
+Language: {LANGUAGE}
+Claimed relevance: {RELEVANCE}
+Query: {QUERY}
+Passage: {PASSAGE}
