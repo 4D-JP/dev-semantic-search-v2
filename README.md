@@ -67,3 +67,22 @@ Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natur
 |-:|-:|-:|
 |`1000`|`0.410`|`2.383`
 |`100`|`0.360`|`2.750`
+
+## Test Form
+
+### 1. Compare OpenAI vs Original BGE M3
+
+* Run the "TEST" form.
+* Click on "Posiitve".
+* Red lines indicate the document that the search was supposed to match.
+* While lines indicate similar (but possibly irrelavant) documents.
+
+<img width="500" height="auto" alt="Screenshot 2026-06-17 at 12 38 50" src="https://github.com/user-attachments/assets/727f6900-eb4b-4696-9ea3-4849049442e0" />
+
+* Click on "Open Weight" to test BGE M3.
+
+<img width="500" height="auto" alt="Screenshot 2026-06-17 at 12 39 02" src="https://github.com/user-attachments/assets/ccded753-9528-4e7b-aa6b-c0a9ef85e818" />
+
+* If you have LEMUR dataset downloaded, the PDF will open when you double click a line.
+
+<img width="500" height="auto" alt="Screenshot 2026-06-17 at 12 42 32" src="https://github.com/user-attachments/assets/f863584e-510a-4808-a938-63e3dbf214e6" />
