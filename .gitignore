@@ -6,3 +6,5 @@ timesensor-demo-v2/Project/DerivedData/*
 timesensor-demo-v2/Data/import-full.4DD.zip
 timesensor-demo-v2/Data/import-passages-openai.4DD.zip
 timesensor-demo-v2/Data-archive/*
+timesensor-demo-v2/Data/training queries/Anthropic-claude-sonnet-4-6-batch-request.jsonl
+timesensor-demo-v2/Data/training queries/OpenAI-gpt-5.4-batch-request.jsonl
