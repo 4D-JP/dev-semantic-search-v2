@@ -7,7 +7,7 @@ If (False:C215)
 	$model:="bge-m3"
 	
 	var $file : 4D:C1709.File
-	$file:=Folder:C1567("/DATA/training queries/BGE").file("OpenAI-gpt-5.4-batch-response.jsonl")
+	$file:=Folder:C1567("/DATA/training queries").file("OpenAI-gpt-5.4-batch-response.jsonl")
 	
 	var $jsonl : Collection
 	$jsonl:=Split string:C1554($file.getText("utf-8"; Document with LF:K24:22); "\n")
