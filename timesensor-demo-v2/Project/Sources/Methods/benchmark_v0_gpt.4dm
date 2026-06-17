@@ -1,11 +1,14 @@
 //%attributes = {"invisible":true}
+//sequential vector query may display progress window
+MESSAGES OFF:C175
+
 var $provider : Text
 $provider:="OpenAI"
 
 var $searches : cs:C1710.SearchSelection
 $searches:=ds:C1482.Search.query("vectors.meta.provider == :1"; $provider)
 
-$searches:=$searches.slice(0; 1000)
+$searches:=$searches.slice(0; 100)
 var $threshold : Real
 $threshold:=0.6
 

@@ -76,8 +76,8 @@ Else
 					$search.positive:=True:C214
 					$search.text:=$text
 					$search.hash:=Generate digest:C1147($text; SHA1 digest:K66:2)
-					$search.passage:=$passage
-					$search.embeddings:=$batch.embeddings[0].embedding
+					//$search.passage:=$passage
+					//$search.embeddings:=$batch.embeddings[0].embedding
 					
 					$text:=$result.hard_negative
 					$search:=ds:C1482.Search.new()
@@ -85,8 +85,8 @@ Else
 					$search.positive:=False:C215
 					$search.text:=$text
 					$search.hash:=Generate digest:C1147($text; SHA1 digest:K66:2)
-					$search.passage:=$passage
-					$search.embeddings:=$batch.embeddings[1].embedding
+					//$search.passage:=$passage
+					//$search.embeddings:=$batch.embeddings[1].embedding
 					
 				End if 
 				

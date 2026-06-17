@@ -18,7 +18,7 @@ For each ($search; ds:C1482.Search.all())
 	$batch:=$client.embeddings.create($search.text; $model; $params)
 	If ($batch.success)
 		var $embeddings : Collection
-		$search.embeddings:=$batch.embedding.embedding
-		$search.save()
+		//$search.embeddings:=$batch.embedding.embedding
+		//$search.save()
 	End if 
 End for each 

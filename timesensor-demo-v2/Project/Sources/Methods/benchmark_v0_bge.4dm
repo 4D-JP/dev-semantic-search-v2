@@ -1,11 +1,14 @@
 //%attributes = {"invisible":true}
+//sequential vector query may display progress window
+MESSAGES OFF:C175
+
 var $provider : Text
 $provider:="llama.cpp"
 
 var $searches : cs:C1710.SearchSelection
 $searches:=ds:C1482.Search.query("vectors.meta.provider == :1"; $provider)
 
-$searches:=$searches.slice(0; 1000)
+$searches:=$searches.slice(0; 100)
 var $threshold : Real
 $threshold:=0.6
 
@@ -57,14 +60,12 @@ $avg:=$stats.average("rank")
 
 sample 1000 queries
 
-45.5% in top 10
-avg. ranking 2.3208
-this is the number to beat
+41.0% in top 10
+avg. ranking 2.3829
 
 sample 100 queries
 
 36.0% in top 10
 avg. ranking 2.750
-this is the number to beat
 
 */
