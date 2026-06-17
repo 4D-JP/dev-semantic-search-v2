@@ -181,11 +181,56 @@
 					"sizingX": "move",
 					"borderStyle": "none",
 					"fill": "transparent"
+				},
+				"rb.openai": {
+					"type": "radio",
+					"text": "OpenAI",
+					"top": 25,
+					"left": 300,
+					"width": 74,
+					"height": 25,
+					"events": [
+						"onClick"
+					],
+					"focusable": false,
+					"dataSource": "Form:C1466.openai",
+					"radioGroup": "model",
+					"dataSourceTypeHint": "boolean"
+				},
+				"rb.bgem3": {
+					"type": "radio",
+					"text": "Open Weight",
+					"top": 25,
+					"left": 380,
+					"width": 114,
+					"height": 25,
+					"events": [
+						"onClick"
+					],
+					"focusable": false,
+					"radioGroup": "model",
+					"dataSource": "Form:C1466.bgem3",
+					"dataSourceTypeHint": "boolean"
+				},
+				"rb.bgem3r1": {
+					"type": "radio",
+					"text": "Custom",
+					"top": 25,
+					"left": 500,
+					"width": 94,
+					"height": 25,
+					"events": [
+						"onClick"
+					],
+					"focusable": false,
+					"radioGroup": "model",
+					"dataSource": "Form:C1466.bgem3r1",
+					"dataSourceTypeHint": "boolean"
 				}
 			}
 		}
 	],
-	"geometryStamp": 211,
+	"geometryStamp": 235,
 	"editor": {
 		"activeView": "View 1",
 		"defaultView": "View 1",

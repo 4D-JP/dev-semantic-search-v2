@@ -9,17 +9,52 @@ property _query : cs:C1710.SearchEntity
 property _defaultThreshold : Real
 property _provider : Text
 property _searches : cs:C1710.SearchSelection
+property openai : Boolean
+property bgem3 : Boolean
+property bgem3r1 : Boolean
 
 Class constructor
 	
 	This:C1470._defaultThreshold:=0.6
 	This:C1470.threshold:=This:C1470._defaultThreshold
 	This:C1470.positive:=False:C215
-	This:C1470._provider:="OpenAI"
-	This:C1470._provider:="llama.cpp"
-	This:C1470._searches:=ds:C1482.Search.query("vectors.meta.provider == :1"; This:C1470._provider)
+	
+	This:C1470.setModel("OpenAI")
+	
+Function setModel($model : Text) : cs:C1710._Test
+	
+	Case of 
+		: ($model="OpenAI")
+			This:C1470.openai:=True:C214
+			This:C1470.bgem3:=False:C215
+			This:C1470.bgem3r1:=False:C215
+			This:C1470._provider:="OpenAI"
+			This:C1470._searches:=ds:C1482.Search.query("vectors.meta.provider == :1"; This:C1470._provider)
+			
+		: ($model="bge-m3")
+			This:C1470.openai:=False:C215
+			This:C1470.bgem3:=True:C214
+			This:C1470.bgem3r1:=False:C215
+			This:C1470._provider:="llama.cpp"
+			This:C1470._searches:=ds:C1482.Search.query("vectors.meta.provider == :1"; This:C1470._provider)
+			
+		: ($model="bge-m3-r1")
+			//This.openai:=False
+			//This.bgem3:=False
+			//This.bgem3r1:=True
+			//This._provider:="llama.cpp"
+			//This._searches:=ds.Search.query("vectors.meta.provider == :1"; This._provider)
+	End case 
+	
+	This:C1470.documents:={col: Null:C1517; sel: Null:C1517; item: Null:C1517; pos: Null:C1517}
+	This:C1470.document:=Null:C1517
+	This:C1470.query:=""
+	
+	return This:C1470
 	
 Function onLoad($event : Object) : cs:C1710._Test
+	
+	OBJECT SET ENABLED:C1123(*; "rb.bgem3r1"; False:C215)
 	
 	return This:C1470
 	
@@ -42,6 +77,12 @@ Function onDoubleClicked($event : Object) : cs:C1710._Test
 Function onClicked($event : Object) : cs:C1710._Test
 	
 	Case of 
+		: ($event.objectName="rb.openai")
+			This:C1470.setModel("OpenAI")
+		: ($event.objectName="rb.bgem3")
+			This:C1470.setModel("bge-m3")
+		: ($event.objectName="rb.bgem3r1")
+			This:C1470.setModel("bge-m3-r1")
 		: ($event.objectName="btn.negative")
 			This:C1470.positive:=False:C215
 			This:C1470.changeDocument().search()

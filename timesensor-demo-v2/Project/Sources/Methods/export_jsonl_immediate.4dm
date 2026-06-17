@@ -1,4 +1,4 @@
-//%attributes = {}
+//%attributes = {"invisible":true}
 #DECLARE($chatCompletionsResult : cs:C1710.AIKit.OpenAIChatCompletionsResult)
 
 /*
@@ -57,40 +57,13 @@ Else
 		If ($results#Null:C1517)
 			$passage:=ds:C1482.Passage.get(This:C1470.passage)
 			
-			var $client : cs:C1710.AIKit.OpenAI
-			$client:=cs:C1710.AIKit.OpenAI.new({baseURL: "http://127.0.0.1:"+String:C10(Storage:C1525.port.embeddings)+"/v1"})
-			var $model : Text
-			$model:="bge-m3"
-			var $params : cs:C1710.AIKit.OpenAIEmbeddingsParameters
-			$params:=cs:C1710.AIKit.OpenAIEmbeddingsParameters.new()
-			var $batch : Object
-			var $search : cs:C1710.SearchEntity
-			var $result : Object
-			For each ($result; $results)
-				$batch:=$client.embeddings.create([$result.positive_query; $result.hard_negative]; $model; $params)
-				If ($batch.success)
-					
-					$text:=$result.positive_query
-					$search:=ds:C1482.Search.new()
-					$search.language:=$result.query_language
-					$search.positive:=True:C214
-					$search.text:=$text
-					$search.hash:=Generate digest:C1147($text; SHA1 digest:K66:2)
-					//$search.passage:=$passage
-					//$search.embeddings:=$batch.embeddings[0].embedding
-					
-					$text:=$result.hard_negative
-					$search:=ds:C1482.Search.new()
-					$search.language:=$result.query_language
-					$search.positive:=False:C215
-					$search.text:=$text
-					$search.hash:=Generate digest:C1147($text; SHA1 digest:K66:2)
-					//$search.passage:=$passage
-					//$search.embeddings:=$batch.embeddings[1].embedding
-					
-				End if 
-				
-			End for each 
+			var $model; $provider : Text
+			$model:=This:C1470.model
+			$provider:=This:C1470.provider
+			
+			//TODO: import GPT, import GME 
+			//in practice, use Batch API
+			
 		End if 
 	End if 
 End if 

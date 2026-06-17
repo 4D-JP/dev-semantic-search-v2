@@ -1,6 +1,6 @@
 //%attributes = {}
 var $Rn : Text
-$Rn:="r4"
+$Rn:="r1"
 
 var $folder : 4D:C1709.Folder
 $folder:=Folder:C1567([""; "DATA"; "dataset"; $Rn].join("/"))
@@ -18,11 +18,7 @@ $fileIndex:=1
 
 var $files; $lines; $posRow; $negRow : Collection
 $files:=$folder.files(fk recursive:K87:7).query("extension == :1"; ".json")
-//r1: 30310
-//r2: 36784
-//r3: 42118
-//r4: 43292
-//r5: 41102
+
 $lines:=[]
 $posRow:=[]
 $negRow:=[]
@@ -49,11 +45,6 @@ For each ($file; $files)
 		End if 
 	End for each 
 End for each 
-//r1: 5200 unique passsages (out of 124761)
-//r2: 5296 unique passsages (out of 124761)
-//r3: 5420 unique passsages (out of 124761)
-//r4: 5421 unique passsages (out of 124761)
-//r5: 5419 unique passsages (out of 124761)
 
 // Second pass: prune negatives that appear as positives
 For each ($jsonl; $allRecords)
@@ -78,7 +69,7 @@ For each ($jsonl; $allRecords)
 		continue
 	End if 
 	$jsonl.neg:=$cleanNeg
-	OB REMOVE:C1226($jsonl; "relevance_score")
+	//OB REMOVE($jsonl; "relevance_score")
 	OB REMOVE:C1226($jsonl; "pos_hash")
 	OB REMOVE:C1226($jsonl; "neg_hash")
 	$posRow.push($jsonl.pos.length)
@@ -97,17 +88,8 @@ End if
 
 var $posAvg; $negAvg : Real
 $posAvg:=$posRow.average()
-//r1: 1.005
-//r2: 1.002
-//r3: 1.002
-//r4: 1.001
-//r5: 1.001
 $negAvg:=$negRow.average()
-//r1: 3.047
-//r2: 2.948
-//r3: 2.018
-//r4: 1.942
-//r5: 1.876
+
 var $totalRows; $prunedRows : Integer
 $totalRows:=$posRow.length
 $prunedRows:=$allRecords.length-$totalRows

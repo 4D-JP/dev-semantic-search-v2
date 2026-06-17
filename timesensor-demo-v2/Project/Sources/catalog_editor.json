@@ -47,10 +47,10 @@
 		},
 		"Search": {
 			"color": {
-				"red": 255,
-				"green": 255,
-				"blue": 255,
-				"alpha": 0
+				"red": 65,
+				"green": 80,
+				"blue": 88,
+				"alpha": 255
 			},
 			"coordinates": {
 				"left": 60.0078125,
@@ -62,10 +62,10 @@
 		},
 		"Passage": {
 			"color": {
-				"red": 255,
-				"green": 255,
-				"blue": 255,
-				"alpha": 0
+				"red": 65,
+				"green": 80,
+				"blue": 88,
+				"alpha": 255
 			},
 			"coordinates": {
 				"left": 518.36328125,
@@ -87,14 +87,14 @@
 		},
 		"Vector": {
 			"color": {
-				"red": 255,
-				"green": 255,
-				"blue": 255,
-				"alpha": 0
+				"red": 65,
+				"green": 80,
+				"blue": 88,
+				"alpha": 255
 			},
 			"coordinates": {
-				"left": 221.21875,
-				"top": 352.2890625,
+				"left": 268.1015625,
+				"top": 351.28125,
 				"width": 120.12109375,
 				"height": 167.33203125
 			},
