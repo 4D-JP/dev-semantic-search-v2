@@ -1,5 +1,35 @@
 {
 	"tables": {
+		"TrainingSearch": {
+			"color": {
+				"red": 70,
+				"green": 76,
+				"blue": 69,
+				"alpha": 255
+			},
+			"coordinates": {
+				"left": 58.8984375,
+				"top": 17.71484375,
+				"width": 119,
+				"height": 230.33203125
+			},
+			"displayable_fields_count": 9
+		},
+		"TrainingPassage": {
+			"color": {
+				"red": 70,
+				"green": 76,
+				"blue": 69,
+				"alpha": 255
+			},
+			"coordinates": {
+				"left": 266.43359375,
+				"top": 40.2421875,
+				"width": 124,
+				"height": 167.33203125
+			},
+			"displayable_fields_count": 6
+		},
 		"Full": {
 			"color": {
 				"red": 255,
@@ -23,8 +53,8 @@
 				"alpha": 0
 			},
 			"coordinates": {
-				"left": 0,
-				"top": 88.77734375,
+				"left": 60.0078125,
+				"top": 284.375,
 				"width": 107,
 				"height": 146.33203125
 			},
@@ -63,8 +93,8 @@
 				"alpha": 0
 			},
 			"coordinates": {
-				"left": 244.27734375,
-				"top": 51.55078125,
+				"left": 221.21875,
+				"top": 352.2890625,
 				"width": 120.12109375,
 				"height": 167.33203125
 			},
@@ -82,6 +112,22 @@
 		}
 	},
 	"relations": {
+		"B6E1879BA09B4A5E8FF047CD1636267D": {
+			"color": {
+				"red": 30,
+				"green": 30,
+				"blue": 30,
+				"alpha": 0
+			}
+		},
+		"D7CA900E79784C0489BA5A6477296ED2": {
+			"color": {
+				"red": 30,
+				"green": 30,
+				"blue": 30,
+				"alpha": 0
+			}
+		},
 		"90C75EB47EBF410E915EB5ABE10C05BC": {
 			"color": {
 				"red": 30,

@@ -7,7 +7,7 @@ $provider:="OpenAI"
 
 var $searches : cs:C1710.SearchSelection
 $searches:=ds:C1482.Search.query("vectors.meta.provider == :1"; $provider)
-
+//22691
 $searches:=$searches.slice(0; 100)
 var $threshold : Real
 $threshold:=0.6

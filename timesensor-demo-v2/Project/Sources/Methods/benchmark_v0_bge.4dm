@@ -7,7 +7,7 @@ $provider:="llama.cpp"
 
 var $searches : cs:C1710.SearchSelection
 $searches:=ds:C1482.Search.query("vectors.meta.provider == :1"; $provider)
-
+//31900
 $searches:=$searches.slice(0; 100)
 var $threshold : Real
 $threshold:=0.6

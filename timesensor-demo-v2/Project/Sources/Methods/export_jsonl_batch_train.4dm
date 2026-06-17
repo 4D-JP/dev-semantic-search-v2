@@ -55,10 +55,10 @@ For each ($lang; $langs)
 		End for each 
 	End for each 
 End for each 
-//3787,5325
+//20389
 
 var $model : Text
-//$provider:="OpenAI"
+$provider:="OpenAI"
 //$model:="gpt-5.4-mini"
 //$model:="gpt-5.4"
 $provider:="Anthropic"
@@ -68,7 +68,7 @@ For each ($passage; $passages)
 	var $language; $text : Text
 	$language:=$passage.document.meta.language
 	$text:=$passage.text
-	PROCESS 4D TAGS:C816($userPromptTemplate; $userPrompt; {text: $text; language: $language; n: 3})
+	PROCESS 4D TAGS:C816($userPromptTemplate; $userPrompt; {text: $text; language: $language; n: 5})
 	Case of 
 		: ($provider="Anthropic")
 			$json:={params: {}}
