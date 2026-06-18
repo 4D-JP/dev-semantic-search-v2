@@ -86,3 +86,9 @@ Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natur
 * If you have LEMUR dataset downloaded, the PDF will open when you double click a line.
 
 <img width="500" height="auto" alt="Screenshot 2026-06-17 at 12 42 32" src="https://github.com/user-attachments/assets/f863584e-510a-4808-a938-63e3dbf214e6" />
+
+## LoRA r1
+
+### 1. Upload Dataset
+
+- [keisuke-miyako/bge-m3-lemur-r1](https://huggingface.co/datasets/keisuke-miyako/bge-m3-lemur-r1)
