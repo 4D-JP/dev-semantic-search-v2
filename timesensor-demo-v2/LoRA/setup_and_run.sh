@@ -301,6 +301,134 @@ export RN CKPT_REPO ADAPTER_DIR CKPT_DIR HF_TOKEN
 python3 /tmp/plot_loss.py
 
 # ─────────────────────────────────────────────────────────────────────────────
+# PHASE 5c — Plot eval loss (mirrors 5b; reads eval_loss from log_history)
+# ─────────────────────────────────────────────────────────────────────────────
+echo ""
+echo "=== [5c/8] Plot eval loss ==="
+
+cat > /tmp/plot_eval_loss.py << 'EOF'
+import json
+import os
+import re
+import csv
+import glob
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+from huggingface_hub import list_repo_files, hf_hub_download
+
+HF_TOKEN    = os.environ["HF_TOKEN"]
+CKPT_REPO   = os.environ["CKPT_REPO"]
+RN          = os.environ["RN"]
+ADAPTER_DIR = os.environ["ADAPTER_DIR"]
+CKPT_DIR    = os.environ["CKPT_DIR"]
+
+# --- Try local first, fall back to HF (identical strategy to plot_loss.py) ---
+local_state = os.path.join(ADAPTER_DIR, "trainer_state.json")
+
+if os.path.exists(local_state):
+    print(f"Using local trainer_state.json: {local_state}")
+    state_file = local_state
+else:
+    local_ckpts = sorted(
+        glob.glob(os.path.join(CKPT_DIR, "checkpoint-*")),
+        key=lambda p: int(p.split("-")[-1])
+    )
+    if local_ckpts:
+        state_file = os.path.join(local_ckpts[-1], "trainer_state.json")
+        print(f"Using local checkpoint: {state_file}")
+    else:
+        print(f"No local checkpoints found — fetching from HF: {CKPT_REPO}")
+        all_files = list(list_repo_files(CKPT_REPO, token=HF_TOKEN))
+        state_files = [f for f in all_files if f.endswith("trainer_state.json")]
+        if not state_files:
+            raise FileNotFoundError(f"No trainer_state.json found in repo: {CKPT_REPO}")
+        def checkpoint_num(path):
+            m = re.search(r'checkpoint-(\d+)', path)
+            return int(m.group(1)) if m else -1
+        state_files.sort(key=checkpoint_num)
+        latest = state_files[-1]
+        print(f"Using HF file: {latest}")
+        state_file = hf_hub_download(
+            repo_id=CKPT_REPO,
+            filename=latest,
+            token=HF_TOKEN,
+            repo_type="model",
+        )
+
+# --- Load ---
+with open(state_file) as f:
+    state = json.load(f)
+
+# eval entries carry "eval_loss" but not "loss"
+eval_log = [e for e in state["log_history"] if "eval_loss" in e]
+
+if not eval_log:
+    print("WARNING: No eval_loss entries found in trainer_state.json — skipping eval chart.")
+    print("This is expected if eval_strategy was not set or training was interrupted early.")
+    raise SystemExit(0)
+
+steps  = [e["step"]       for e in eval_log]
+losses = [e["eval_loss"]  for e in eval_log]
+
+print(f"Found {len(eval_log)} eval entries, steps {steps[0]} to {steps[-1]}")
+
+os.makedirs(ADAPTER_DIR, exist_ok=True)
+
+# --- CSV ---
+csv_path = os.path.join(ADAPTER_DIR, "eval-loss.csv")
+with open(csv_path, "w", newline="") as f:
+    writer = csv.writer(f)
+    writer.writerow(["step", "eval_loss"])
+    writer.writerows(zip(steps, losses))
+print(f"CSV  saved -> {csv_path}")
+
+# --- Eval loss plot ---
+plt.figure(figsize=(10, 5))
+plt.plot(steps, losses, marker="o", markersize=3, linewidth=1.5, color="darkorange")
+plt.title(f"bge-m3-lemur-lora {RN} — Eval Loss")
+plt.xlabel("Step")
+plt.ylabel("Eval Loss")
+plt.grid(True)
+plt.tight_layout()
+
+png_path = os.path.join(ADAPTER_DIR, "eval-loss.png")
+plt.savefig(png_path, dpi=150)
+print(f"Chart saved -> {png_path}")
+
+# --- Combined train + eval plot ---
+train_csv_path = os.path.join(ADAPTER_DIR, "training-loss.csv")
+if os.path.exists(train_csv_path):
+    import csv as csv_mod
+    train_steps, train_losses = [], []
+    with open(train_csv_path) as f:
+        reader = csv_mod.DictReader(f)
+        for row in reader:
+            train_steps.append(int(row["step"]))
+            train_losses.append(float(row["loss"]))
+
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ax.plot(train_steps, train_losses, marker="o", markersize=2, linewidth=1.5,
+            label="Train loss", color="steelblue")
+    ax.plot(steps, losses, marker="o", markersize=3, linewidth=1.5,
+            label="Eval loss", color="darkorange")
+    ax.set_title(f"bge-m3-lemur-lora {RN} — Train vs Eval Loss")
+    ax.set_xlabel("Step")
+    ax.set_ylabel("Loss")
+    ax.legend()
+    ax.grid(True)
+    fig.tight_layout()
+    combined_path = os.path.join(ADAPTER_DIR, "train-vs-eval-loss.png")
+    fig.savefig(combined_path, dpi=150)
+    print(f"Combined chart saved -> {combined_path}")
+else:
+    print("training-loss.csv not found — skipping combined chart")
+EOF
+
+export RN CKPT_REPO ADAPTER_DIR CKPT_DIR HF_TOKEN
+python3 /tmp/plot_eval_loss.py
+
+# ─────────────────────────────────────────────────────────────────────────────
 # PHASE 6 — Merge LoRA + GGUF export
 # ─────────────────────────────────────────────────────────────────────────────
 echo ""

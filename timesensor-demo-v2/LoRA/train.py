@@ -5,6 +5,7 @@ BGE-M3 fine-tuning
   - LoRA via PEFT (rank 32, targets query/key/value/dense)
   - Multi-GPU via torchrun (DDP handled by HF Trainer under the hood)
   - Checkpoints every 100 steps, pushed to HuggingFace
+  - 3 000-row held-out eval split; eval loss logged every 100 steps
 
 Usage (via torchrun in setup_and_run.sh):
   torchrun --nproc_per_node=N train.py <RN> <WORK_DIR> <CKPT_REPO> <HF_DATASET>
@@ -47,13 +48,15 @@ IS_MAIN    = LOCAL_RANK == 0
 # ─────────────────────────────────────────────────────────────────────────────
 # Hyperparameters — tuned for 4 × A100 80GB PCIe
 # Effective batch = PER_DEVICE_BATCH × GRAD_ACCUM × WORLD_SIZE
-#                 = 8 × 2 × 4 = 64
+#                 = 32 × 1 × 4 = 128
+# Eval split: 3 000 rows held out before training (fixed seed)
 # ─────────────────────────────────────────────────────────────────────────────
 PER_DEVICE_BATCH = 32
 GRAD_ACCUM       = 1
 LEARNING_RATE    = 2e-5
 EPOCHS           = 3
 WARMUP_RATIO     = 0.10
+EVAL_SIZE        = 3_000   # rows held out from the flattened triplet pool
 
 # LoRA — rank 32 hits the sweet spot between expressiveness and adapter size
 # target_modules uses short names: PEFT matches any layer ending in these names
@@ -129,7 +132,17 @@ def main():
     )
 
     if IS_MAIN:
-        log.info(f"Training triplets: {len(train_ds)}")
+        log.info(f"Total triplets before split: {len(train_ds)}")
+
+    # ── Train / eval split ────────────────────────────────────────────────────
+    # Fixed seed so the same rows are always held out across re-runs.
+    # EVAL_SIZE rows are drawn from the full flattened pool.
+    split    = train_ds.train_test_split(test_size=EVAL_SIZE, seed=42)
+    train_ds = split["train"]
+    eval_ds  = split["test"]
+
+    if IS_MAIN:
+        log.info(f"Train triplets: {len(train_ds)}  |  Eval triplets: {len(eval_ds)}")
 
     # ── Model ─────────────────────────────────────────────────────────────────
     if IS_MAIN:
@@ -195,6 +208,10 @@ def main():
         save_steps=100,
         save_total_limit=10,
 
+        # Evaluation — run on held-out split every 100 steps (aligned with save)
+        eval_strategy="steps",
+        eval_steps=100,
+
         # Push checkpoints to HuggingFace after each save
         push_to_hub=True,
         hub_model_id=CKPT_REPO,
@@ -216,6 +233,7 @@ def main():
         model=model,
         args=training_args,
         train_dataset=train_ds,
+        eval_dataset=eval_ds,
         loss=loss,
     )
 
