@@ -45,6 +45,7 @@ For each ($file; $files)
 		End if 
 	End for each 
 End for each 
+//18335
 
 // Second pass: prune negatives that appear as positives
 For each ($jsonl; $allRecords)
@@ -87,9 +88,14 @@ If ($lines.length#0)
 End if 
 
 var $posAvg; $negAvg : Real
-$posAvg:=$posRow.average()
-$negAvg:=$negRow.average()
+$posAvg:=$posRow.average()  //1
+$negAvg:=$negRow.average()  //1.855138328694
 
 var $totalRows; $prunedRows : Integer
-$totalRows:=$posRow.length
-$prunedRows:=$allRecords.length-$totalRows
+$totalRows:=$posRow.length  //52809
+$prunedRows:=$allRecords.length-$totalRows  //0
+
+/*
+
+
+*/
