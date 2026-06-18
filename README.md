@@ -92,3 +92,10 @@ Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natur
 ### 1. Upload Dataset
 
 - [keisuke-miyako/bge-m3-lemur-r1](https://huggingface.co/datasets/keisuke-miyako/bge-m3-lemur-r1)
+
+### 2. Spin up GPU on RunPod
+
+- torch 2.4.1+cu124
+- 4 GPUs
+- NVIDIA A40
+- bf16=True
