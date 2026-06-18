@@ -69,7 +69,7 @@ For each ($jsonl; $allRecords)
 		continue
 	End if 
 	$jsonl.neg:=$cleanNeg
-	//OB REMOVE($jsonl; "relevance_score")
+	OB REMOVE:C1226($jsonl; "relevance_score")
 	OB REMOVE:C1226($jsonl; "pos_hash")
 	OB REMOVE:C1226($jsonl; "neg_hash")
 	$posRow.push($jsonl.pos.length)
