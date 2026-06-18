@@ -64,7 +64,7 @@ LORA_R           = 32
 LORA_ALPHA       = 64
 LORA_DROPOUT     = 0.05
 LORA_TARGETS     = ["query", "key", "value", "dense", "intermediate.dense"]
-MNRL_SCALE       = 15.0   # down from 20 to protect positive floor
+MNRL_SCALE       = 20  
 
 def make_training_pairs(example):
     """
