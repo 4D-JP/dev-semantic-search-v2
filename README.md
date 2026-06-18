@@ -94,7 +94,14 @@ Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natur
 - [keisuke-miyako/bge-m3-lemur-r1](https://huggingface.co/datasets/keisuke-miyako/bge-m3-lemur-r1)
 - Number of rows: `52809`
 
-### 2. Spin up GPU on RunPod
+### 2. Multiple Negatives Symmetric Ranking Loss
 
 - torch 2.4.1+cu124
 - NVIDIA A40x4
+- per_device_train_batch_size: `32`
+- gradient_accumulation_steps: `1`
+- learning_rate: `2e-5`
+- num_train_epochs: `3`
+- lora_alpha: `64`
+- r: `32`
+- scale: `20`
