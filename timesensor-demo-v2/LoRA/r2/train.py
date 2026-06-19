@@ -53,7 +53,7 @@ IS_MAIN    = LOCAL_RANK == 0
 # ─────────────────────────────────────────────────────────────────────────────
 PER_DEVICE_BATCH = 32
 GRAD_ACCUM       = 1
-LEARNING_RATE    = 2e-5
+LEARNING_RATE    = 1.5e-5 # reduced from 2e-5
 EPOCHS           = 3
 WARMUP_RATIO     = 0.10
 EVAL_SIZE        = 3_000   # rows held out from the flattened triplet pool
