@@ -100,6 +100,6 @@ Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natur
 
 |Model|BM@10|NDCG@10
 |-|-:|-:
-|OpenAI|`0.649029`|`0.524939`|
-|Original BGE M3|`0.701567`|`0.522989`|
-|Fine-tuned BGE M3||
+|OpenAI|`0.722222`|`0.586204`|
+|Original BGE M3|`0.781818`|`0.586923`|
+|Fine-tuned BGE M3|`0.881504`|`0.663531`
