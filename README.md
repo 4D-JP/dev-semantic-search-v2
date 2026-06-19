@@ -44,11 +44,6 @@ Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natur
 * **Hit Rate @10**: Did the exact matching document from `test.jsonl` show up anywhere in the top 10 search results?
 * **NDCG @10**: Did the matching document rank highly (preferably #1), or was it buried down at #10?
 
-|Sample|Match Rate|Average Rank
-|-:|-:|-:|
-|`1000`|`0.455`|`2.320`
-|`100`|`0.370`|`2.621`
-
 ## Benchmark - BGE M3
 
 ### 1. Build the Haystack:
@@ -62,11 +57,6 @@ Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natur
 ### 2. Calculate standard retrieval metrics:
 
 - Run the same tests to compare against the OpenAI model.
-
-|Sample|Match Rate|Average Rank
-|-:|-:|-:|
-|`1000`|`0.410`|`2.383`
-|`100`|`0.360`|`2.750`
 
 ## Test Form
 
@@ -105,3 +95,11 @@ Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natur
 - lora_alpha: `64`
 - r: `32`
 - scale: `20`
+
+### 3. Calculate standard retrieval metrics:
+
+|Model|BM@10|NDCG@10
+|-|-:|-:
+|OpenAI|``|``|
+|Original BGE M3|``|``|
+|Fine-tuned BGE M3|``|``|
