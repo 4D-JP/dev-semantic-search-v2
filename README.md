@@ -36,18 +36,13 @@ The dataset is the public [**G4KMU/LEMUR**](https://huggingface.co/datasets/G4KM
 Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natural-language user queries.
 
 |Documents|Queries|Passages|Query Passages|Cost|
-|-|-|-|-|-|
+|-:|-:|-:|-:|-:|
 |`3380`|`22692`|`75973`|`3787`|`$13.05`|
 
 ### 3. Calculate standard retrieval metrics:
 
 * **Hit Rate @10**: Did the exact matching document from `test.jsonl` show up anywhere in the top 10 search results?
 * **NDCG @10**: Did the matching document rank highly (preferably #1), or was it buried down at #10?
-
-|Sample|Match Rate|Average Rank
-|-:|-:|-:|
-|`1000`|`0.455`|`2.320`
-|`100`|`0.370`|`2.621`
 
 ## Benchmark - BGE M3
 
@@ -56,17 +51,12 @@ Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natur
 - Use the standard BGE M3 model to generate embeddings in `1024` dimensions from chunks of `509` tokens.
 
 |Documents|Queries|Passages|Query Passages
-|-|-|-|-|
+|-:|-:|-:|-:|
 |`3380`|`31900`|`108190`|`5325`
 
 ### 2. Calculate standard retrieval metrics:
 
 - Run the same tests to compare against the OpenAI model.
-
-|Sample|Match Rate|Average Rank
-|-:|-:|-:|
-|`1000`|`0.410`|`2.383`
-|`100`|`0.360`|`2.750`
 
 ## Test Form
 
@@ -92,3 +82,24 @@ Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natur
 ### 1. Upload Dataset
 
 - [keisuke-miyako/bge-m3-lemur-r1](https://huggingface.co/datasets/keisuke-miyako/bge-m3-lemur-r1)
+- Number of rows: `52809`
+
+### 2. Multiple Negatives Symmetric Ranking Loss
+
+- torch 2.4.1+cu124
+- NVIDIA A40x4
+- per_device_train_batch_size: `32`
+- gradient_accumulation_steps: `1`
+- learning_rate: `2e-5`
+- num_train_epochs: `3`
+- lora_alpha: `64`
+- r: `32`
+- scale: `20`
+
+### 3. Calculate standard retrieval metrics:
+
+|Model|BM@10|NDCG@10
+|-|-:|-:
+|OpenAI|`0.649029`|`0.524939`|
+|Original BGE M3|`0.701567`|`0.522989`|
+|Fine-tuned BGE M3||
