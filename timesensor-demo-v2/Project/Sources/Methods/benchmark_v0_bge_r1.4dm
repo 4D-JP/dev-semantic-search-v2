@@ -3,12 +3,12 @@
 MESSAGES OFF:C175
 
 var $provider; $model : Text
-//$provider:="OpenAI"
-//$model:="text-embedding-3-small"
+$provider:="OpenAI"
+$model:="text-embedding-3-small"
 //$provider:="llama.cpp"
 //$model:="bge-m3"
-$provider:="llama.cpp"
-$model:="bge-m3-r1"
+//$provider:="llama.cpp"
+//$model:="bge-m3-r1"
 
 var $stats : Collection
 $stats:=["|BM@10|NDCG@10"]
@@ -39,26 +39,25 @@ $sampleSize:=$searches.length\10
 $searches:=$searches.slice(0; $sampleSize)
 
 var $all : cs:C1710.PassageSelection
-$all:=ds:C1482.Passage.query("meta.provider == :1 and meta.model == :2"; $provider; $model)
+$all:=ds:C1482.Passage.query("meta.provider == :1"+\
+" and meta.model == :2"+\
+" and meta.type == :3"; $provider; $model; "@")
 /*
 OpenAI
-75973
+14328
 BGE M3
-108190 
-BGE M3 (in progress)
-24529
+17072 
+BGE M3
+83193
 */
 var $search : cs:C1710.SearchEntity
 For each ($search; $searches)
-	
 	var $vectors : cs:C1710.VectorSelection
 	$vectors:=$search.vectors.query("meta.provider == :1 and meta.model == :2"; $provider; $model)
 	ASSERT:C1129($vectors.length=1)
-	
 	//the embeddings for query
 	var $embeddings : 4D:C1709.Vector
 	$embeddings:=$vectors.first().embeddings
-	
 	//the passage that matches the query
 	var $passages : cs:C1710.PassageSelection
 	$passages:=$search.vectors.query("meta.provider == :1 and meta.model == :2"; $provider; $model).passage
@@ -89,22 +88,22 @@ SET TEXT TO PASTEBOARD:C523($stats.join("\n"))
 
 /*
 
-OpenAI
+OpenAI (10% of all queries)
 
 |BM@10|NDCG@10
 |-:|-:
-|0.649029|0.524939|
+|0.665784|0.538284|
 
 Original BGE M3
 
 |BM@10|NDCG@10
 |-:|-:
-|0.701567|0.522989|
+|0.715987|0.534895|
 
 Fine-tuned BGE M3
 
 |BM@10|NDCG@10
 |-:|-:
-|0.888777|0.716897|
+|0.811912|0.601433|
 
 */
