@@ -36,7 +36,7 @@ The dataset is the public [**G4KMU/LEMUR**](https://huggingface.co/datasets/G4KM
 Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natural-language user queries.
 
 |Documents|Queries|Passages|Query Passages|Cost|
-|-|-|-|-|-|
+|-:|-:|-:|-:|-:|
 |`3380`|`22692`|`75973`|`3787`|`$13.05`|
 
 ### 3. Calculate standard retrieval metrics:
@@ -51,7 +51,7 @@ Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natur
 - Use the standard BGE M3 model to generate embeddings in `1024` dimensions from chunks of `509` tokens.
 
 |Documents|Queries|Passages|Query Passages
-|-|-|-|-|
+|-:|-:|-:|-:|
 |`3380`|`31900`|`108190`|`5325`
 
 ### 2. Calculate standard retrieval metrics:
