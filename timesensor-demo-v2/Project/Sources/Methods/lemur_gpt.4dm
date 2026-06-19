@@ -1,4 +1,9 @@
 //%attributes = {"invisible":true}
+/*
+OpenAI, text-embedding-3-small
+go over all documents (ds.Full.all)
+extract and create passages 
+*/
 If (False:C215)
 	var $LLM : cs:C1710.RemoteLLM
 	$LLM:=cs:C1710.RemoteLLM.new("OpenAI")

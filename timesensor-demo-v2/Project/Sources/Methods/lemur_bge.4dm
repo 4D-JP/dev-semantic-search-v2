@@ -1,4 +1,10 @@
 //%attributes = {"invisible":true}
+/*
+llama.cpp, bge-m3
+go over all documents (ds.Full.all)
+extract and create passages 
+*/
+
 If (False:C215)
 	var $client : cs:C1710.AIKit.OpenAI
 	$client:=cs:C1710.AIKit.OpenAI.new({baseURL: "http://127.0.0.1:"+String:C10(Storage:C1525.port.embeddings)+"/v1"})

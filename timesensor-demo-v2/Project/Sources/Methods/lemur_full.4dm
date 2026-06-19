@@ -1,4 +1,10 @@
 //%attributes = {"invisible":true}
+/*
+
+import Full
+
+*/
+
 If (False:C215)
 	
 	var $langs : Collection
@@ -61,7 +67,6 @@ en: 228
 			var $pdfFile : 4D:C1709.File
 			$pdfFile:=$rootFolder.file($json.pdf_path)
 			ASSERT:C1129($pdfFile.exists)
-			
 			var $eFull : cs:C1710.FullEntity
 			$eFull:=ds:C1482.Full.new()
 			$eFull.file:=$pdfFile
