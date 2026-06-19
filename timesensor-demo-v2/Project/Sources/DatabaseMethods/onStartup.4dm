@@ -7,7 +7,7 @@ settings
 var $settings : Object
 $settings:={}
 $settings.chatCompletion:=False:C215
-$settings.reranker:=False:C215
+$settings.reranker:=True:C214
 $settings.embeddings:=True:C214
 
 var $homeFolder; $folder : 4D:C1709.Folder
