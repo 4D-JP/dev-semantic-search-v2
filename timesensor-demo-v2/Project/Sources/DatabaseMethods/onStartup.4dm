@@ -24,6 +24,10 @@ $folder:=$homeFolder.folder("timesensor-ai")
 $path:="bge-m3-lemur-r1-q8_0.gguf"
 $URL:="keisuke-miyako/bge-m3-lemur-r1-gguf"
 
+$folder:=$homeFolder.folder("timesensor-ai")
+$path:="bge-m3-lemur-r2-q8_0.gguf"
+$URL:="keisuke-miyako/bge-m3-lemur-r2-gguf"
+
 //$folder:=$homeFolder.folder("GPT")
 //$path:="cl100k_tokenizer.gguf"
 //$URL:="keisuke-miyako/cl100k_tokenizer-gguf"
