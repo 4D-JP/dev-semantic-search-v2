@@ -98,7 +98,7 @@ Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natur
 
 ### 3. Calculate standard retrieval metrics:
 
-- Against `train` dataset; the score is high for fine-tuned BGE M3 as the models were specifically trained on this dataset
+- Against `test` dataset
 
 |Model|BM@10|NDCG@10
 |-|-:|-:
