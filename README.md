@@ -77,7 +77,7 @@ Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natur
 
 <img width="500" height="auto" alt="Screenshot 2026-06-17 at 12 42 32" src="https://github.com/user-attachments/assets/f863584e-510a-4808-a938-63e3dbf214e6" />
 
-## LoRA r1
+## LoRA
 
 ### 1. Upload Dataset
 
@@ -104,7 +104,7 @@ Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natur
 |-|-:|-:
 |OpenAI|`0.722222`|`0.586204`|
 |Original BGE M3|`0.781818`|`0.586923`|
-|Fine-tuned BGE M3|`0.881504`|`0.663531`
+|Fine-tuned BGE M3 R1|`0.881504`|`0.663531`
 
 - Full
 
@@ -112,6 +112,12 @@ Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natur
 |-|-:|-:
 |OpenAI|`0.665784`|`0.538284`|
 |Original BGE M3|`0.715987`|`0.534895`|
-|Fine-tuned BGE M3|`0.811912`|`0.601433`
+|Fine-tuned BGE M3 R1|`0.811912`|`0.601433`
 
----
+### r1
+
+<img width="500" height="auto" alt="train-vs-eval-loss" src="https://github.com/user-attachments/assets/a5dcc6d0-99bd-48a1-994a-cf57f3d68eab" />
+
+### r2
+
+<img width="500" height="auto" alt="train-vs-eval-loss" src="https://github.com/user-attachments/assets/68e06d77-05cc-4771-b9fd-6fa871f4afbc" />
