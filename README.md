@@ -113,3 +113,14 @@ Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natur
 |OpenAI|`0.665784`|`0.538284`|
 |Original BGE M3|`0.715987`|`0.534895`|
 |Fine-tuned BGE M3|`0.811912`|`0.601433`
+
+---
+
+## r1
+
+<img width="500" height="auto" alt="train-vs-eval-loss-2" src="https://github.com/user-attachments/assets/cd00e434-f73b-429d-a8a8-42f89a8fee9a" />
+
+
+## r2
+
+<img width="500" height="auto" alt="train-vs-eval-loss" src="https://github.com/user-attachments/assets/1b39b05d-b147-4f94-a650-4c12a85d9a82" />
