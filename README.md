@@ -98,7 +98,7 @@ Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natur
 
 ### 3. Calculate standard retrieval metrics:
 
-- Against `test` dataset
+- Against `test` dataset (data unseen during training)
 
 |Model|BM@10|NDCG@10
 |-|-:|-:
