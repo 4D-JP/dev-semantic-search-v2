@@ -54,17 +54,17 @@ IS_MAIN    = LOCAL_RANK == 0
 PER_DEVICE_BATCH = 32
 GRAD_ACCUM       = 1
 LEARNING_RATE    = 1.5e-5 # reduced from 2e-5
-EPOCHS           = 3
+EPOCHS           = 5 # increased from 3
 WARMUP_RATIO     = 0.10
-EVAL_SIZE        = 3_000   # rows held out from the flattened triplet pool
+EVAL_SIZE        = 2_000 # 3_000   # rows held out from the flattened triplet pool
 
 # LoRA — rank 32 hits the sweet spot between expressiveness and adapter size
 # target_modules uses short names: PEFT matches any layer ending in these names
 LORA_R           = 32
 LORA_ALPHA       = 64
-LORA_DROPOUT     = 0.05
+LORA_DROPOUT     = 0.03 # 0.05
 LORA_TARGETS     = ["query", "key", "value", "dense"] #, "intermediate.dense"]
-MNRL_SCALE       = 15.0 # reduced from 20
+MNRL_SCALE       = 12.0 # reduced from 20
 
 def make_training_pairs(example):
     """
@@ -193,7 +193,7 @@ def main():
         gradient_accumulation_steps=GRAD_ACCUM,
         learning_rate=LEARNING_RATE,
         warmup_steps=warmup_steps,
-        weight_decay=0.01,
+        weight_decay=0.03, # 0.01,
         lr_scheduler_type="cosine",
 
         # Precision
@@ -206,7 +206,7 @@ def main():
         # Checkpointing — save every 100 steps, keep last 10
         save_strategy="steps",
         save_steps=100,
-        save_total_limit=10,
+        save_total_limit=10, # 15,
 
         # Evaluation — run on held-out split every 100 steps (aligned with save)
         eval_strategy="steps",
@@ -268,7 +268,7 @@ Dataset: [{HF_DATASET}](https://huggingface.co/datasets/{HF_DATASET})
 ```python
 from peft import PeftModel
 from transformers import AutoModel
-base = AutoModel.from_pretrained("{HF_USER}/bge-m3-lemur-r1-merged")
+base = AutoModel.from_pretrained("{HF_USER}/bge-m3-lemur-r2-merged")
 model = PeftModel.from_pretrained(base, "{HF_USER}/bge-m3-lemur-{RN}-adapter")
 ```
 """)

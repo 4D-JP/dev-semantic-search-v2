@@ -1,12 +1,12 @@
 #!/bin/bash
 # =============================================================================
 #  BGE-M3 Fine-Tuning — Full Pipeline
-#  Usage: bash setup_and_run.sh r1
+#  Usage: bash setup_and_run.sh r2
 #  Requires env vars: HF_TOKEN, RUNPOD_API_KEY
 # =============================================================================
 set -euo pipefail
 
-RN="${1:-r1}"
+RN="${1:-r2}"
 HF_USER="keisuke-miyako"
 HF_DATASET="${HF_USER}/bge-m3-lemur-${RN}"
 ADAPTER_REPO="${HF_USER}/bge-m3-lemur-${RN}-adapter"
