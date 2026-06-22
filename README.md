@@ -120,4 +120,4 @@ Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natur
 
 ### r2
 
-<img width="500" height="auto" alt="train-vs-eval-loss" src="https://github.com/user-attachments/assets/68e06d77-05cc-4771-b9fd-6fa871f4afbc" />
+<img width="500" height="auto" alt="train-vs-eval-loss" src="https://github.com/user-attachments/assets/61d8cac1-c557-4c9c-9d0c-f525d672427f" />
