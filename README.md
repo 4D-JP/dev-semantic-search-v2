@@ -98,7 +98,7 @@ Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natur
 
 ### 3. Calculate standard retrieval metrics:
 
-- Train
+- Against `train` dataset; the score is high for fine-tuned model as the model was specifically trained on this dataset
 
 |Model|BM@10|NDCG@10
 |-|-:|-:
@@ -107,7 +107,7 @@ Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natur
 |Fine-tuned BGE M3 R1|`0.881504`|`0.663531`
 |Fine-tuned BGE M3 R2|`0.903448`|`0.728600`|
 
-- Full
+- Against `full` dataset
 
 |Model|BM@10|NDCG@10
 |-|-:|-:
