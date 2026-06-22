@@ -1,6 +1,6 @@
 //%attributes = {}
 var $Rn : Text
-$Rn:="r1"
+$Rn:="r2"
 
 var $folder : 4D:C1709.Folder
 $folder:=Folder:C1567([""; "DATA"; "dataset"; $Rn].join("/"))

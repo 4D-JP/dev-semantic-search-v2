@@ -9,13 +9,13 @@ run once for each new model
 
 */
 
-If (False:C215)
+If (True:C214)
 	var $client : cs:C1710.AIKit.OpenAI
 	$client:=cs:C1710.AIKit.OpenAI.new({baseURL: "http://127.0.0.1:"+String:C10(Storage:C1525.port.embeddings)+"/v1"})
 	
 	var $model; $provider : Text
 	$provider:="llama.cpp"
-	$model:="bge-m3-r1"
+	$model:="bge-m3-r2"
 	
 	var $file : 4D:C1709.File
 	$file:=Folder:C1567("/DATA/synthetic queries/BGE").file("OpenAI-gpt-5.4-batch-response.jsonl")
