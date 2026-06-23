@@ -161,3 +161,7 @@ LoRA doesn't give a clean way to decompress a representation; adding another ada
 |Fine-tuned BGE M3 R3|`0.678369`|`0.475100`
 
 Worse than original BGE M3. Removal of `intermediate.dense` was a mistake.
+
+### r4
+
+<img width="500" height="auto" alt="r5_combined" src="https://github.com/user-attachments/assets/fd69624f-183b-46c7-95d4-107d6899fcec" />
