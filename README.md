@@ -117,7 +117,7 @@ Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natur
 |Fine-tuned BGE M3 R2|`0.728526`|`0.523571`
 
 > [!WARNING]
-> `r2` is a regression. Evidently the hard negatives were too hard.
+> On aggregate, `r2` is a regression. Evidently the hard negatives were too hard.
 
 ### r1
 
