@@ -133,12 +133,12 @@ Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natur
 
 Although the benchkmarks score high, close examination reveals **representation collapse**; the LoRA pushed all passage embeddings into a tighter cluster in the embedding space. The model learned to make positives score higher, but it did so partly by compressing the entire distribution upward rather than purely by separating relevant from irrelevant. Everything scores between `0.65` and `0.75` because the geometry has been flattened. This is a **fail**.
 
-> [!WARNING]
-> `MultipleNegativesSymmetricRankingLoss` is probably the wrong fit for database query criteria.
-
 ### r2 - FAIL!
 
 LoRA doesn't give a clean way to decompress a representation; adding another adapter on top of a distorted base is not going to undo collapse that's already baked into the weights. This is a **fail**.
+
+> [!CAUTION]
+> `MultipleNegativesSymmetricRankingLoss` is the wrong fit for database query criteria. The passage to query reverse signal is likely damaging the model.
 
 ### Redo Plan
 
