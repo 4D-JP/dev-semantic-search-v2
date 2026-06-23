@@ -136,3 +136,9 @@ Although the benchkmarks score high, close examination reveals **representation 
 ### r2 - FAIL
 
 LoRA doesn't give a clean way to decompress a representation; adding another adapter on top of a distorted base is not going to undo collapse that's already baked into the weights. This is a **fail**.
+
+### Redo Plan
+
+- Remove `intermediate.dense`
+- Reduce scale to `15`
+- Increase weight decay to `0.03`
