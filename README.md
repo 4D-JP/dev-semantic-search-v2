@@ -165,3 +165,23 @@ Worse than original BGE M3. Removal of `intermediate.dense` was a mistake.
 ### r4
 
 <img width="500" height="auto" alt="r5_combined" src="https://github.com/user-attachments/assets/fd69624f-183b-46c7-95d4-107d6899fcec" />
+
+## Limitations of Training Embedding Models
+
+**MNRL symmetric loss risking reverse-direction noise**
+
+The symmetric part adds a second InfoNCE term: for each positive pair it also treats the positive as a query and the original query as the target. If your positives are noisy or domain-shifted from typical queries, this reverse pass can push the query embedding in a direction that makes no semantic sense. The model appears to improve on retrieval benchmarks but the general sentence-to-sentence similarity space quietly degrades. This is hard to catch because standard retrieval evals don't measure it.
+
+**Sometimes there is no genuine textual signal making a passage relevant**
+
+Relevance can be grounded in external context — user intent, domain ontology, business classification, implicit world knowledge — none of which is recoverable from the text pair alone. The bi-encoder sees tokens. If the tokens don't carry the signal, there is nothing to learn.
+
+**Encoder-only embedding models can't be trained on semantic similarities that don't exist**
+
+This is a fundamental architectural constraint. A bi-encoder produces independent embeddings for query and passage and measures their geometric distance. It cannot reason about the relationship between them jointly. If the relevance is relational rather than semantic — i.e. it only exists when you consider both texts together in context — a bi-encoder cannot represent it. A cross-encoder can approximate it but even that has limits if the signal is truly external.
+
+**The remaining uncaught passages likely belong to that category and 100% retrieval is unreachable**
+
+This is an important thing to accept clearly. In any real retrieval system there is a ceiling imposed by how much relevance signal is textually recoverable. Passages above that ceiling are not failures of training or architecture — they are genuinely outside what embedding-based retrieval can do. Chasing them with more fine-tuning produces exactly the overfitting and space distortion we discussed. The right response is to acknowledge the ceiling and design the system around it — hybrid retrieval, reranking, or metadata filtering for the cases that fall outside the textual signal space.
+
+Realistic target for the traning pipeline: optimize the bi-encoder for what it can genuinely learn, measure where the ceiling is empirically, and route the remainder to a different mechanism rather than asking the embedding model to do something its architecture cannot support.
