@@ -126,3 +126,13 @@ Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natur
 ### r2
 
 <img width="500" height="auto" alt="train-vs-eval-loss" src="https://github.com/user-attachments/assets/61d8cac1-c557-4c9c-9d0c-f525d672427f" />
+
+## Closer Look
+
+### r1 - FAIL
+
+Although the benchkmarks score high, close examination reveals **representation collapse**; the LoRA pushed all passage embeddings into a tighter cluster in the embedding space. The model learned to make positives score higher, but it did so partly by compressing the entire distribution upward rather than purely by separating relevant from irrelevant. Everything scores between `0.65` and `0.75` because the geometry has been flattened. This is a **fail**.
+
+### r2 - FAIL
+
+LoRA doesn't give a clean way to decompress a representation; adding another adapter on top of a distorted base is not going to undo collapse that's already baked into the weights. This is a **fail**.
