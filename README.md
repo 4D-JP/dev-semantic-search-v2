@@ -129,11 +129,11 @@ Pass the documents from `test.jsonl` to a frontier LLM to create synthetic natur
 
 ## Closer Look
 
-### r1 - FAIL
+### r1 - FAIL?
 
 Although the benchkmarks score high, close examination reveals **representation collapse**; the LoRA pushed all passage embeddings into a tighter cluster in the embedding space. The model learned to make positives score higher, but it did so partly by compressing the entire distribution upward rather than purely by separating relevant from irrelevant. Everything scores between `0.65` and `0.75` because the geometry has been flattened. This is a **fail**.
 
-### r2 - FAIL
+### r2 - FAIL!
 
 LoRA doesn't give a clean way to decompress a representation; adding another adapter on top of a distorted base is not going to undo collapse that's already baked into the weights. This is a **fail**.
 
@@ -143,6 +143,18 @@ LoRA doesn't give a clean way to decompress a representation; adding another ada
 - Reduce scale to `15`
 - Increase weight decay to `0.03`
 
-### r3
+### r3 - FAIL!
 
 <img width="500" height="auto" alt="r3_combined" src="https://github.com/user-attachments/assets/40219926-6b2b-4dd5-9521-9962a683b30e" />
+
+- Against `full` dataset
+
+|Model|BM@10|NDCG@10
+|-|-:|-:
+|OpenAI|`0.665784`|`0.538284`|
+|Original BGE M3|`0.715987`|`0.534895`|
+|Fine-tuned BGE M3 R1|`0.811912`|`0.601433`
+|Fine-tuned BGE M3 R2|`0.728526`|`0.523571`
+|Fine-tuned BGE M3 R3|`0.678369`|`0.475100`
+
+Worse than original BGE M3. Removal of `intermediate.dense` was a mistake.
