@@ -142,3 +142,7 @@ LoRA doesn't give a clean way to decompress a representation; adding another ada
 - Remove `intermediate.dense`
 - Reduce scale to `15`
 - Increase weight decay to `0.03`
+
+### r3
+
+<img width="500" height="auto" alt="r3_combined" src="https://github.com/user-attachments/assets/40219926-6b2b-4dd5-9521-9962a683b30e" />
