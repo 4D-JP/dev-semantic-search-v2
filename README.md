@@ -166,6 +166,15 @@ Worse than original BGE M3. Removal of `intermediate.dense` was a mistake.
 
 <img width="500" height="auto" alt="r5_combined" src="https://github.com/user-attachments/assets/fd69624f-183b-46c7-95d4-107d6899fcec" />
 
+|Model|BM@10|NDCG@10
+|-|-:|-:
+|OpenAI|`0.665784`|`0.538284`|
+|Original BGE M3|`0.715987`|`0.534895`|
+|Fine-tuned BGE M3 R1|`0.811912`|`0.601433`
+|Fine-tuned BGE M3 R5|`0.785579`|`0.563636`
+
+The absolute retrival score is lower than `r1` but we can expect less over-fitting, less representation collapse.
+
 ## Limitations of Training Embedding Models
 
 **MNRL symmetric loss risking reverse-direction noise**
