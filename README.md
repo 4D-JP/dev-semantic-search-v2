@@ -174,7 +174,7 @@ Worse than original BGE M3. Removal of `intermediate.dense` was a mistake.
 |Fine-tuned BGE M3 R5|`0.785579`|`0.563636`
 
 > [!NOTE]
-> The absolute retrival score is lower than `r1` but we can expect less over-fitting, less representation collapse.
+> The absolute retrival score is lower than `r1` but we can expect less over-fitting, less representation collapse, thanks to assymmetric multiple negative rank loss.
 
 ## Limitations of Training Embedding Models
 
