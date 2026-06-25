@@ -196,9 +196,7 @@ This is an important thing to accept clearly. In any real retrieval system there
 
 Realistic target for the traning pipeline: optimize the bi-encoder for what it can genuinely learn, measure where the ceiling is empirically, and route the remainder to a different mechanism rather than asking the embedding model to do something its architecture cannot support.
 
----
-
-## r5 — Removal of Markdown Tables
+## Removal of Markdown Tables
 
 ### Reason
 
