@@ -195,3 +195,39 @@ This is a fundamental architectural constraint. A bi-encoder produces independen
 This is an important thing to accept clearly. In any real retrieval system there is a ceiling imposed by how much relevance signal is textually recoverable. Passages above that ceiling are not failures of training or architecture — they are genuinely outside what embedding-based retrieval can do. Chasing them with more fine-tuning produces exactly the overfitting and space distortion we discussed. The right response is to acknowledge the ceiling and design the system around it — hybrid retrieval, reranking, or metadata filtering for the cases that fall outside the textual signal space.
 
 Realistic target for the traning pipeline: optimize the bi-encoder for what it can genuinely learn, measure where the ceiling is empirically, and route the remainder to a different mechanism rather than asking the embedding model to do something its architecture cannot support.
+
+---
+
+## r5 — Removal of Markdown Tables
+
+### Reason
+
+Markdown tables are structured data encoded as text. A typical table entry consists of pipe-delimited cells containing numeric values, identifiers, or short labels with no surrounding prose context. When a query asks about information contained in such a table, the relevance relationship is **interpretive and positional** — it depends on understanding column headers, row structure, and schema — none of which is recoverable from token-level text similarity alone.
+
+A bi-encoder embedding model produces independent embeddings for query and passage and measures their geometric distance. It has no mechanism to interpret tabular structure. As a result, query–table pairs that are genuinely relevant produce near-zero cosine similarity, indistinguishable from hard negatives. During contrastive training with MNRL, these pairs generate failed gradients — the loss cannot be satisfied because the model cannot distinguish the positive from the negative. These failed gradients do not simply cancel out; they distort the surrounding embedding space as a side effect, degrading the model's ability to match queries to legitimate text passages.
+
+Markdown table passages were therefore identified as a structurally unliftable category: no amount of fine-tuning on a bi-encoder can recover the relevance signal, and their continued presence in the training data causes net harm.
+
+### Method
+
+Passages were scanned using a regular expression match against the raw source text. Any file containing a sequence of 20 or more pipe-delimited segments was classified as a markdown table and moved to a separate folder for exclusion from the training dataset.
+
+```4d
+ARRAY LONGINT($pos; 0)
+ARRAY LONGINT($len; 0)
+For each ($file; $files)
+    $text:=$file.getText()
+    If (Match regex("(?:[^|]+\\|){20,}"; $text; 1; $pos; $len))
+        $file.moveTo($targetFolder)
+    End if
+End for each
+```
+
+The regex `(?:[^|]+\|){20,}` matches any sequence of 20 or more non-pipe segments each terminated by a pipe character. This threshold reliably identifies tables while avoiding false positives from prose containing occasional pipe characters.
+
+### Effect
+
+Removing this category reduces dataset size but increases the proportion of examples carrying genuine textual signal. The expected outcome is a more meaningful loss floor, reduced gradient noise during training, and improved retrieval quality on text-based queries — even if raw loss metrics appear higher due to the removal of examples the model could previously satisfy trivially.
+
+<img width="500" height="auto" alt="r6_combined" src="https://github.com/user-attachments/assets/23e0b60e-9b06-4faf-b185-c5e76af74265" />
+
