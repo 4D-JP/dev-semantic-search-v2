@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 BGE-M3 fine-tuning
-  - sentence-transformers 3.x + MultipleNegativesSymmetricRankingLoss
-  - LoRA via PEFT (rank 32, targets query/key/value/dense)
+  - sentence-transformers 3.x + MultipleNegativesRankingLoss (asymmetric)
+  - LoRA via PEFT (rank 32, targets query/key/value/dense/intermediate.dense)
   - Multi-GPU via torchrun (DDP handled by HF Trainer under the hood)
   - Checkpoints every 100 steps, pushed to HuggingFace
   - 3 000-row held-out eval split; eval loss logged every 100 steps
@@ -16,7 +16,7 @@ from datasets import load_dataset
 from huggingface_hub import login
 from peft import LoraConfig, get_peft_model, TaskType
 from sentence_transformers import SentenceTransformer, SentenceTransformerTrainer
-from sentence_transformers.losses import MultipleNegativesSymmetricRankingLoss
+from sentence_transformers.losses import MultipleNegativesRankingLoss
 from sentence_transformers.training_args import SentenceTransformerTrainingArguments
 
 
@@ -29,7 +29,7 @@ log = logging.getLogger(__name__)
 
 # ── Args ──────────────────────────────────────────────────────────────────────
 HF_USER="keisuke-miyako"
-RN         = sys.argv[1] if len(sys.argv) > 1 else "r1"
+RN         = sys.argv[1] if len(sys.argv) > 1 else "r4"
 WORK_DIR   = sys.argv[2] if len(sys.argv) > 2 else f"/workspace/bge_m3/{RN}"
 CKPT_REPO  = sys.argv[3] if len(sys.argv) > 3 else f"{HF_USER}/bge-m3-lemur-{RN}-checkpoints"
 HF_DATASET = sys.argv[4] if len(sys.argv) > 4 else f"{HF_USER}/bge-m3-lemur-{RN}"
@@ -53,7 +53,7 @@ IS_MAIN    = LOCAL_RANK == 0
 # ─────────────────────────────────────────────────────────────────────────────
 PER_DEVICE_BATCH = 32
 GRAD_ACCUM       = 1
-LEARNING_RATE    = 2e-5
+LEARNING_RATE    = 1.5e-5
 EPOCHS           = 3
 WARMUP_RATIO     = 0.10
 EVAL_SIZE        = 3_000   # rows held out from the flattened triplet pool
@@ -64,7 +64,7 @@ LORA_R           = 32
 LORA_ALPHA       = 64
 LORA_DROPOUT     = 0.05
 LORA_TARGETS     = ["query", "key", "value", "dense", "intermediate.dense"]
-MNRL_SCALE       = 20  
+MNRL_SCALE       = 15
 
 def make_training_pairs(example):
     """
@@ -149,7 +149,7 @@ def main():
         log.info("Loading merged model ...")
 
     model = SentenceTransformer(
-        f"BAAI/bge-m3",
+        f"{HF_USER}/bge-m3-lemur-r6-merged",
         model_kwargs={"torch_dtype": torch.bfloat16},
     )
 
@@ -170,10 +170,10 @@ def main():
     if IS_MAIN:
         backbone_lora.print_trainable_parameters()
 
-    # MultipleNegativesSymmetricRankingLoss (InfoNCE, bidirectional):
-    #   - extends MNRL with reverse direction (passage → query)
+    # MultipleNegativesRankingLoss (InfoNCE, unidirectional):
+    #   - query → passage direction only (task is asymmetric by design)
     #   - scale = 1/temperature (20 ≈ temperature 0.05)
-    loss = MultipleNegativesSymmetricRankingLoss(model, MNRL_SCALE)
+    loss = MultipleNegativesRankingLoss(model, MNRL_SCALE)
 
     # ── Training arguments ────────────────────────────────────────────────────
     total_steps = (len(train_ds) * EPOCHS) // (PER_DEVICE_BATCH * GRAD_ACCUM * WORLD_SIZE)
@@ -252,7 +252,7 @@ def main():
         # Save a minimal adapter README
         with open(os.path.join(ADAPTER_DIR, "README.md"), "w") as f:
             f.write(f"""---
-base_model: BAAI/bge-m3
+base_model: {HF_USER}/bge-m3-lemur-r6-merged
 tags:
   - lemur
   - embeddings
@@ -268,7 +268,7 @@ Dataset: [{HF_DATASET}](https://huggingface.co/datasets/{HF_DATASET})
 ```python
 from peft import PeftModel
 from transformers import AutoModel
-base = AutoModel.from_pretrained("BAAI/bge-m3")
+base = AutoModel.from_pretrained("{HF_USER}/bge-m3-lemur-r6-merged")
 model = PeftModel.from_pretrained(base, "{HF_USER}/bge-m3-lemur-{RN}-adapter")
 ```
 """)

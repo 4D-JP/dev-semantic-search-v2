@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 BGE-M3 fine-tuning
-  - sentence-transformers 3.x + MultipleNegativesSymmetricRankingLoss
-  - LoRA via PEFT (rank 32, targets query/key/value/dense)
+  - sentence-transformers 3.x + MultipleNegativesRankingLoss (asymmetric)
+  - LoRA via PEFT (rank 32, targets query/key/value/dense/intermediate.dense)
   - Multi-GPU via torchrun (DDP handled by HF Trainer under the hood)
   - Checkpoints every 100 steps, pushed to HuggingFace
   - 3 000-row held-out eval split; eval loss logged every 100 steps
@@ -16,7 +16,7 @@ from datasets import load_dataset
 from huggingface_hub import login
 from peft import LoraConfig, get_peft_model, TaskType
 from sentence_transformers import SentenceTransformer, SentenceTransformerTrainer
-from sentence_transformers.losses import MultipleNegativesSymmetricRankingLoss
+from sentence_transformers.losses import MultipleNegativesRankingLoss
 from sentence_transformers.training_args import SentenceTransformerTrainingArguments
 
 
@@ -29,10 +29,10 @@ log = logging.getLogger(__name__)
 
 # ── Args ──────────────────────────────────────────────────────────────────────
 HF_USER="keisuke-miyako"
-RN         = sys.argv[1] if len(sys.argv) > 1 else "r1"
+RN         = sys.argv[1] if len(sys.argv) > 1 else "r6"
 WORK_DIR   = sys.argv[2] if len(sys.argv) > 2 else f"/workspace/bge_m3/{RN}"
 CKPT_REPO  = sys.argv[3] if len(sys.argv) > 3 else f"{HF_USER}/bge-m3-lemur-{RN}-checkpoints"
-HF_DATASET = sys.argv[4] if len(sys.argv) > 4 else f"{HF_USER}/bge-m3-lemur-{RN}"
+HF_DATASET = sys.argv[4] if len(sys.argv) > 4 else f"{HF_USER}/bge-m3-lemur-r3"
 HF_TOKEN   = os.environ.get("HF_TOKEN", "")
 
 ADAPTER_DIR = os.path.join(WORK_DIR, "adapter")
@@ -170,10 +170,10 @@ def main():
     if IS_MAIN:
         backbone_lora.print_trainable_parameters()
 
-    # MultipleNegativesSymmetricRankingLoss (InfoNCE, bidirectional):
-    #   - extends MNRL with reverse direction (passage → query)
+    # MultipleNegativesRankingLoss (InfoNCE, unidirectional):
+    #   - query → passage direction only (task is asymmetric by design)
     #   - scale = 1/temperature (20 ≈ temperature 0.05)
-    loss = MultipleNegativesSymmetricRankingLoss(model, MNRL_SCALE)
+    loss = MultipleNegativesRankingLoss(model, MNRL_SCALE)
 
     # ── Training arguments ────────────────────────────────────────────────────
     total_steps = (len(train_ds) * EPOCHS) // (PER_DEVICE_BATCH * GRAD_ACCUM * WORLD_SIZE)

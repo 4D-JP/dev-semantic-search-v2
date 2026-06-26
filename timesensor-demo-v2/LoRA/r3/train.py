@@ -28,11 +28,12 @@ logging.basicConfig(
 log = logging.getLogger(__name__)
 
 # ── Args ──────────────────────────────────────────────────────────────────────
-HF_USER="keisuke-miyako"
-RN         = sys.argv[1] if len(sys.argv) > 1 else "r1"
+HF_USER    = "keisuke-miyako"
+RN         = sys.argv[1] if len(sys.argv) > 1 else "r3"
 WORK_DIR   = sys.argv[2] if len(sys.argv) > 2 else f"/workspace/bge_m3/{RN}"
 CKPT_REPO  = sys.argv[3] if len(sys.argv) > 3 else f"{HF_USER}/bge-m3-lemur-{RN}-checkpoints"
 HF_DATASET = sys.argv[4] if len(sys.argv) > 4 else f"{HF_USER}/bge-m3-lemur-{RN}"
+BASE_MODEL = sys.argv[5] if len(sys.argv) > 5 else "BAAI/bge-m3"
 HF_TOKEN   = os.environ.get("HF_TOKEN", "")
 
 ADAPTER_DIR = os.path.join(WORK_DIR, "adapter")
@@ -63,8 +64,9 @@ EVAL_SIZE        = 3_000   # rows held out from the flattened triplet pool
 LORA_R           = 32
 LORA_ALPHA       = 64
 LORA_DROPOUT     = 0.05
-LORA_TARGETS     = ["query", "key", "value", "dense", "intermediate.dense"]
-MNRL_SCALE       = 20  
+LORA_TARGETS     = ["query", "key", "value", "dense"] #, "intermediate.dense"]
+MNRL_SCALE       = 15 # 20
+WEIGHT_DECAY     = 0.03 # 0.01
 
 def make_training_pairs(example):
     """
@@ -97,7 +99,8 @@ def main():
         if HF_TOKEN:
             login(token=HF_TOKEN, add_to_git_credential=False)
         log.info(f"Run: {RN}  |  GPUs: {torch.cuda.device_count()}  |  world_size: {WORLD_SIZE}")
-        log.info(f"Dataset: {HF_DATASET}")
+        log.info(f"Dataset:  {HF_DATASET}")
+        log.info(f"Base model: {BASE_MODEL}")
         log.info(f"Effective batch: {PER_DEVICE_BATCH} × {GRAD_ACCUM} × {WORLD_SIZE} = "
                  f"{PER_DEVICE_BATCH * GRAD_ACCUM * WORLD_SIZE}")
 
@@ -144,12 +147,11 @@ def main():
     if IS_MAIN:
         log.info(f"Train triplets: {len(train_ds)}  |  Eval triplets: {len(eval_ds)}")
 
-    # ── Model ─────────────────────────────────────────────────────────────────
     if IS_MAIN:
-        log.info("Loading merged model ...")
+        log.info(f"Loading model: {BASE_MODEL} ...")
 
     model = SentenceTransformer(
-        f"BAAI/bge-m3",
+        BASE_MODEL,
         model_kwargs={"torch_dtype": torch.bfloat16},
     )
 
@@ -193,7 +195,7 @@ def main():
         gradient_accumulation_steps=GRAD_ACCUM,
         learning_rate=LEARNING_RATE,
         warmup_steps=warmup_steps,
-        weight_decay=0.01,
+        weight_decay=WEIGHT_DECAY,
         lr_scheduler_type="cosine",
 
         # Precision
