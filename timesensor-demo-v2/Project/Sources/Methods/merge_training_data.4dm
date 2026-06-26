@@ -1,6 +1,6 @@
 //%attributes = {}
 var $Rn : Text
-$Rn:="r2"
+$Rn:="r7"
 
 var $folder : 4D:C1709.Folder
 $folder:=Folder:C1567([""; "DATA"; "dataset"; $Rn].join("/"))
@@ -73,6 +73,10 @@ For each ($jsonl; $allRecords)
 	OB REMOVE:C1226($jsonl; "relevance_score")
 	OB REMOVE:C1226($jsonl; "pos_hash")
 	OB REMOVE:C1226($jsonl; "neg_hash")
+	OB REMOVE:C1226($jsonl; "drift")
+	OB REMOVE:C1226($jsonl; "new_similarity")
+	OB REMOVE:C1226($jsonl; "old_similarity")
+	
 	$posRow.push($jsonl.pos.length)
 	$negRow.push($jsonl.neg.length)
 	$lines.push(JSON Stringify:C1217($jsonl))
@@ -94,8 +98,3 @@ $negAvg:=$negRow.average()  //1.855138328694
 var $totalRows; $prunedRows : Integer
 $totalRows:=$posRow.length  //52809
 $prunedRows:=$allRecords.length-$totalRows  //0
-
-/*
-
-
-*/
