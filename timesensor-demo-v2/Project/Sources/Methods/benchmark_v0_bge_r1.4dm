@@ -3,12 +3,12 @@
 MESSAGES OFF:C175
 
 var $provider; $model : Text
-$provider:="OpenAI"
-$model:="text-embedding-3-small"
+//$provider:="OpenAI"
+//$model:="text-embedding-3-small"
 //$provider:="llama.cpp"
 //$model:="bge-m3"
-//$provider:="llama.cpp"
-//$model:="bge-m3-r1"
+$provider:="llama.cpp"
+$model:="bge-m3-r6"
 
 var $stats : Collection
 $stats:=["|BM@10|NDCG@10"]
@@ -28,12 +28,14 @@ var $searches : cs:C1710.SearchSelection
 $searches:=ds:C1482.Search.query("positive ==:1"+\
 " and vectors.meta.provider == :2"+\
 " and vectors.meta.model == :3"; True:C214; $provider; $model)
+
 /*
 OpenAI
 11346
-BGE M3 (original, fine-tuned)
+BGE M3
 15950
 */
+
 var $sampleSize : Integer
 $sampleSize:=$searches.length\10
 $searches:=$searches.slice(0; $sampleSize)
@@ -41,15 +43,39 @@ $searches:=$searches.slice(0; $sampleSize)
 var $all : cs:C1710.PassageSelection
 $all:=ds:C1482.Passage.query("meta.provider == :1"+\
 " and meta.model == :2"+\
-" and meta.type == :3"; $provider; $model; "@")
+" and meta.type == :3"; $provider; $model; "train")
+
 /*
 OpenAI
-14328
+{
+  train: 44310
+  test : 14328 
+  null : 17335
+}
+
 BGE M3
-17072 
-BGE M3
-83193
+{
+  train: 66122
+  test : 17072 
+  null : 24996 (neither train nor test)
+} 108190 
+
+BGE M3 r1
+{
+  train: 66122
+  test : 17072 
+  null : 24996 (neither train nor test)
+} 108190
+
+BGE M3 r6
+{
+  train: 66122 (53790)
+  test : 17072
+  null : 24993
+} 108190
+
 */
+
 var $search : cs:C1710.SearchEntity
 For each ($search; $searches)
 	var $vectors : cs:C1710.VectorSelection
@@ -88,22 +114,45 @@ SET TEXT TO PASTEBOARD:C523($stats.join("\n"))
 
 /*
 
-OpenAI (10% of all queries)
+@test
+
+OpenAI|0.722222|0.586204|
+M3    |0.781818|0.586923|
+r6    |0.837617|0.628939|
 
 |BM@10|NDCG@10
 |-:|-:
-|0.665784|0.538284|
+|0.000000|0.000000|
 
-Original BGE M3
+------|--------|--------|
+r1    |0.881504|0.663531|  symmetric rank loss
+r5    |0.862068|0.628188| asymmetric rank loss
+r2    |0.903448|0.728600| overfitting, see @full
+r3    |0.776175|0.557011| overfitting, see @full
 
-|BM@10|NDCG@10
-|-:|-:
-|0.715987|0.534895|
+multiple negative symmetric rank loss 
+risks hurting the model by producing noise in the reverse direction
+the model may seem to perform on limit tasks
+but its general ability to match sentence to sentence might be damaged.
 
-Fine-tuned BGE M3
+@full (test+train)
 
-|BM@10|NDCG@10
-|-:|-:
-|0.811912|0.601433|
+OpenAI|0.665784|0.538284|
+M3    |0.715987|0.534895|
+r6    |0.770532|0.573282|
+------|--------|--------|
+r1    |0.811912|0.601433| representation collapse?
+r5    |0.785579|0.563636|
+r2    |0.728526|0.523571|  
+r3    |0.678369|0.475100| 
+
+sometimes there are no genuine signals
+that makes a passage relevant to the query.
+
+encoder-only embedding models (be-encoder)
+can't be trained on semantic similarities that don't exist.
+
+the remaining uncaught passages likely belong to that category.
+i.e. embedding model alone will not reach 100% retrieval.
 
 */
