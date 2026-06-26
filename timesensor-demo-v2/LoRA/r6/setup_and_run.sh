@@ -441,6 +441,7 @@ from peft import PeftModel
 
 adapter = "${ADAPTER_DIR}"
 merged  = "${MERGED_DIR}"
+BASE_MODEL = "BAAI/bge-m3"
 print(f"Loading base BAAI/bge-m3 ...")
 tokenizer = AutoTokenizer.from_pretrained("BAAI/bge-m3")
 base = AutoModel.from_pretrained("BAAI/bge-m3", torch_dtype=torch.bfloat16)
@@ -467,11 +468,24 @@ from huggingface_hub import hf_hub_download
 import shutil
 for fn in ["tokenizer.json", "tokenizer_config.json", "sentencepiece.bpe.model"]:
     try:
-        src = hf_hub_download(repo_id="BAAI/bge-m3", filename=fn)
+        src = hf_hub_download(repo_id=BASE_MODEL, filename=fn)
         shutil.copy(src, os.path.join(merged, fn))
     except Exception:
         pass  # may already be present from tokenizer.save_pretrained
 
+# Copy sentence-transformers config files from base so next round loads
+# with correct CLS pooling instead of falling back to mean pooling
+import json
+for fn in ["sentence_bert_config.json", "1_Pooling/config.json"]:
+    try:
+        src = hf_hub_download(repo_id="BAAI/bge-m3", filename=fn)
+        dest = os.path.join(merged, fn)
+        os.makedirs(os.path.dirname(dest), exist_ok=True)
+        shutil.copy(src, dest)
+        print(f"  ✓ copied {fn}")
+    except Exception as e:
+        print(f"  WARNING: could not copy {fn}: {e}")
+        
 print(f"✓ Merged model saved to {merged}")
 PYEOF
 
