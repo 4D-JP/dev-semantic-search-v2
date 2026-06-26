@@ -2,7 +2,7 @@
 /*
 
 export v1/batch endpoint batch request
-passage.meta.type:="train"
+passage.meta.type:="test"
 
 */
 
@@ -40,12 +40,12 @@ For each ($lang; $langs)
 	$langFolder:=$languagesFolder.folder($lang)
 	$rootFolder:=$langFolder.parent.parent
 	
-	var $train : 4D:C1709.File
-	$train:=$langFolder.file("train.jsonl")
-	ASSERT:C1129($train.exists)
+	var $test : 4D:C1709.File
+	$test:=$langFolder.file("test.jsonl")
+	ASSERT:C1129($test.exists)
 	var $row : Text
 	var $rows : Collection
-	$rows:=Split string:C1554($train.getText("utf-8"; Document with LF:K24:22); "\n")
+	$rows:=Split string:C1554($test.getText("utf-8"; Document with LF:K24:22); "\n")
 	var $json : Object
 	$passages:=ds:C1482.Passage.newSelection()
 	For each ($row; $rows)
@@ -58,12 +58,12 @@ For each ($lang; $langs)
 		ASSERT:C1129($fulls.length=1)
 		For each ($passage; $fulls.passages.query("meta.provider == :1 and meta.model == :2"; $provider; $model))
 			$passages.add($passage)
-			$passage.meta.type:="train"
+			$passage.meta.type:="test"
 			$passage.save()
 		End for each 
 	End for each 
 End for each 
-//20389
+//3787,5325
 
 //$provider:="OpenAI"
 //$model:="gpt-5.4-mini"
