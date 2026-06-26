@@ -8,7 +8,7 @@ set -euo pipefail
 
 RN="${1:-r6}"
 HF_USER="keisuke-miyako"
-HF_DATASET="${HF_USER}/bge-m3-lemur-r3"
+HF_DATASET="${HF_USER}/bge-m3-lemur-${RN}"
 ADAPTER_REPO="${HF_USER}/bge-m3-lemur-${RN}-adapter"
 MERGED_REPO="${HF_USER}/bge-m3-lemur-${RN}-merged"
 GGUF_REPO="${HF_USER}/bge-m3-lemur-${RN}-gguf"

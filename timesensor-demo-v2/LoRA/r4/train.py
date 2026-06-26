@@ -214,7 +214,7 @@ def main():
         fp16=False,
         gradient_checkpointing=True,
         gradient_checkpointing_kwargs={"use_reentrant": False},
-        ddp_find_unused_parameters=False,
+        ddp_find_unused_parameters=True,
 
         # Checkpointing — save every 100 steps, keep last 10
         save_strategy="steps",

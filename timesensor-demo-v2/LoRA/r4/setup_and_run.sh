@@ -504,7 +504,7 @@ echo "✓ GGUF saved: ${GGUF_PATH} (${SIZE_MB} MB)"
 # Create a model card for the GGUF repo
 cat > "${GGUF_DIR}/README.md" <<EOF
 ---
-base_model: {HF_USER}/bge-m3-lemur-r6-merged
+base_model: ${HF_USER}/bge-m3-lemur-${RN}-merged
 tags:
   - lemur
   - embeddings
