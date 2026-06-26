@@ -85,11 +85,14 @@ While ($count*$batch<$hashes.length)
 			var $comparison:={vector: $search.passage.embeddings; metric: mk cosine:K95:1; threshold: $hardNegativeThreshold}
 			
 			$hardNegatives:=ds:C1482.TrainingSearch.query("embeddings > :1"+\
-				"   and ((positive == false and passage.DocumentID in :2)"+\
+				"    and ((positive == false and passage.DocumentID in :2)"+\
 				"    or  ( positive == true  and not(passage.DocumentID in :2)))"+\
 				"    and not(passage.hash in :3)"+\
 				"    and not(passage.hash in :4)"; \
-				$comparison; $documentIds; $positiveHashes; $negativeHashes)
+				$comparison; \
+				$documentIds; \
+				$positiveHashes; \
+				$negativeHashes)
 			
 			var $negativePassages : cs:C1710.PassageSelection
 			$negativePassages:=$hardNegatives.passage
