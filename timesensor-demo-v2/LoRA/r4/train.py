@@ -56,15 +56,15 @@ GRAD_ACCUM       = 1
 LEARNING_RATE    = 1.5e-5
 EPOCHS           = 3
 WARMUP_RATIO     = 0.10
-EVAL_SIZE        = 3_000   # rows held out from the flattened triplet pool
+EVAL_SIZE        = 500     # rows held out from the flattened triplet pool (~7% of ~7 300 triplets)
 
 # LoRA — rank 32 hits the sweet spot between expressiveness and adapter size
 # target_modules uses short names: PEFT matches any layer ending in these names
 LORA_R           = 32
 LORA_ALPHA       = 64
 LORA_DROPOUT     = 0.05
-LORA_TARGETS     = ["query", "key", "value", "dense", "intermediate.dense"]
-MNRL_SCALE       = 15
+LORA_TARGETS     = ["query", "key", "value", "dense"]
+MNRL_SCALE       = 20
 
 def make_training_pairs(example):
     """
@@ -148,10 +148,22 @@ def main():
     if IS_MAIN:
         log.info("Loading merged model ...")
 
-    model = SentenceTransformer(
+    # Load explicitly with CLS pooling rather than SentenceTransformer(repo_id)
+    # because merged models saved via AutoModel.save_pretrained lack modules.json
+    # and sentence-transformers falls back to mean pooling when it can't find it.
+    # BGE-M3 uses CLS pooling — this guarantees correct behaviour regardless of
+    # what config files are present in the repo.
+    from sentence_transformers import models as st_models
+    _transformer = st_models.Transformer(
         f"{HF_USER}/bge-m3-lemur-r6-merged",
-        model_kwargs={"torch_dtype": torch.bfloat16},
+        model_args={"torch_dtype": torch.bfloat16},
     )
+    _pooling = st_models.Pooling(
+        _transformer.get_word_embedding_dimension(),
+        pooling_mode_cls_token=True,
+        pooling_mode_mean_tokens=False,
+    )
+    model = SentenceTransformer(modules=[_transformer, _pooling])
 
     # Apply LoRA to the transformer backbone
     lora_config = LoraConfig(
@@ -165,6 +177,7 @@ def main():
     )
     backbone = model[0].auto_model
     backbone_lora = get_peft_model(backbone, lora_config)
+    backbone_lora.enable_input_require_grads()   # required for DDP with frozen LoRA base weights
     model[0].auto_model = backbone_lora
 
     if IS_MAIN:
@@ -201,7 +214,7 @@ def main():
         fp16=False,
         gradient_checkpointing=True,
         gradient_checkpointing_kwargs={"use_reentrant": False},
-        ddp_find_unused_parameters=True,
+        ddp_find_unused_parameters=False,
 
         # Checkpointing — save every 100 steps, keep last 10
         save_strategy="steps",
@@ -212,10 +225,11 @@ def main():
         eval_strategy="steps",
         eval_steps=100,
 
-        # Push checkpoints to HuggingFace after each save
+        # Push checkpoints to HuggingFace — "every_save" pushes once per save_steps
+        # (matches our save cadence without spawning a git commit per eval step)
         push_to_hub=True,
         hub_model_id=CKPT_REPO,
-        hub_strategy="checkpoint",
+        hub_strategy="every_save",
         hub_token=HF_TOKEN if HF_TOKEN else None,
 
         # Logging
