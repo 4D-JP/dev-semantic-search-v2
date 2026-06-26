@@ -8,12 +8,12 @@
 				"alpha": 255
 			},
 			"coordinates": {
-				"left": 58.8984375,
-				"top": 17.71484375,
-				"width": 119,
-				"height": 230.33203125
+				"left": 63.40234375,
+				"top": 0,
+				"width": 150.4921875,
+				"height": 289.5625
 			},
-			"displayable_fields_count": 9
+			"displayable_fields_count": 11
 		},
 		"TrainingPassage": {
 			"color": {
@@ -25,10 +25,10 @@
 			"coordinates": {
 				"left": 266.43359375,
 				"top": 40.2421875,
-				"width": 124,
-				"height": 167.33203125
+				"width": 153.5546875,
+				"height": 237.90625
 			},
-			"displayable_fields_count": 6
+			"displayable_fields_count": 9
 		},
 		"Full": {
 			"color": {
@@ -53,8 +53,8 @@
 				"alpha": 255
 			},
 			"coordinates": {
-				"left": 60.0078125,
-				"top": 284.375,
+				"left": 93.75390625,
+				"top": 318.359375,
 				"width": 107,
 				"height": 146.33203125
 			},

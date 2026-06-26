@@ -53,6 +53,9 @@
 		<field name="text" uuid="8DA48F10ADB84352B9D62DDCFA258852" type="10" id="4"/>
 		<field name="hash" uuid="5726884382F948AA9ADF83DB8BB9A8DC" type="10" limiting_length="40" id="5"/>
 		<field name="meta" uuid="56904C9CF6A546D38BD405A07BC8D8F2" type="21" blob_switch_size="2147483647" id="6"/>
+		<field name="newEmbeddings" uuid="D7974D742C2B4D9AACC2ED122489C116" type="21" blob_switch_size="2147483647" id="7">
+			<field_extra class_id="4D.Vector"/>
+		</field>
 		<primary_key field_name="ID" field_uuid="F6DEB2CFB83E4D519FDB3C8B46CE9E85"/>
 	</table>
 	<table name="TrainingSearch" uuid="32240A1424464042A489321B9F9954DE" id="6" prevent_journaling="true">
@@ -67,6 +70,11 @@
 		<field name="similarity" uuid="F31E4BB3CA2047E98B199E6665632A8D" type="6" id="7"/>
 		<field name="meta" uuid="B767740A0431432EAF4D59803F531D82" type="21" blob_switch_size="2147483647" id="8"/>
 		<field name="PassageID" uuid="AE94033005F745AD8887578F0FE55654" type="4" id="9"/>
+		<field name="newEmbeddings" uuid="8E06205E92BE4689A8BF6A1D9A673841" type="21" blob_switch_size="2147483647" id="10">
+			<field_extra class_id="4D.Vector"/>
+		</field>
+		<field name="newSimilarity" uuid="994F7BD0FF1E4E92B197524226DDE930" type="6" id="11"/>
+		<field name="drift" uuid="CE17165AF6C14B02A943CA823324DD2A" type="6" id="12"/>
 		<primary_key field_name="ID" field_uuid="CC10F14696AF42D7A3825668286E42B1"/>
 	</table>
 	<relation uuid="0950F7340E464964B922538C784E683D" name_Nto1="document" name_1toN="passages" state="1">
@@ -154,6 +162,11 @@
 			<table_ref uuid="7061FDD9B83C4859952280BAE285A1FC" name="Full"/>
 		</field_ref>
 	</index>
+	<index kind="regular" uuid="2BAAA9B298814EB799B2BE2A2EEF8578" type="3">
+		<field_ref uuid="56904C9CF6A546D38BD405A07BC8D8F2" name="meta">
+			<table_ref uuid="FBC4DF9448864BD78FA9955EAC2605A4" name="TrainingPassage"/>
+		</field_ref>
+	</index>
 	<index kind="regular" uuid="3E3BE77C4F3F4FF9AF009662BE5BB43E" type="3">
 		<field_ref uuid="898D5092AEAC477FB7B2BE3AC2A8266F" name="meta">
 			<table_ref uuid="59AAC06F1D5E464AA747AB81FDAC6562" name="Vector"/>
@@ -166,6 +179,11 @@
 	</index>
 	<index kind="regular" uuid="59AC6CB7A19B444E9EFF3AA78E91A8B5" type="3">
 		<field_ref uuid="AE94033005F745AD8887578F0FE55654" name="PassageID">
+			<table_ref uuid="32240A1424464042A489321B9F9954DE" name="TrainingSearch"/>
+		</field_ref>
+	</index>
+	<index kind="regular" uuid="6012A3EA0C284416B0815C122EBBA711" type="3">
+		<field_ref uuid="B767740A0431432EAF4D59803F531D82" name="meta">
 			<table_ref uuid="32240A1424464042A489321B9F9954DE" name="TrainingSearch"/>
 		</field_ref>
 	</index>
@@ -184,6 +202,11 @@
 			<table_ref uuid="FBC4DF9448864BD78FA9955EAC2605A4" name="TrainingPassage"/>
 		</field_ref>
 	</index>
+	<index kind="regular" uuid="8BB441702DA14C2E90000991735F22F4" type="1">
+		<field_ref uuid="CE17165AF6C14B02A943CA823324DD2A" name="drift">
+			<table_ref uuid="32240A1424464042A489321B9F9954DE" name="TrainingSearch"/>
+		</field_ref>
+	</index>
 	<index kind="regular" unique_keys="true" uuid="8DA83B89623F4925AC3F285359CB1C05" type="7">
 		<field_ref uuid="CC10F14696AF42D7A3825668286E42B1" name="ID">
 			<table_ref uuid="32240A1424464042A489321B9F9954DE" name="TrainingSearch"/>
@@ -196,6 +219,11 @@
 	</index>
 	<index kind="regular" uuid="A38E2F617DF947D08268263FD32241E4" type="3">
 		<field_ref uuid="81271C5BB9CF4E2580793A77F2C74CD0" name="language">
+			<table_ref uuid="32240A1424464042A489321B9F9954DE" name="TrainingSearch"/>
+		</field_ref>
+	</index>
+	<index kind="regular" uuid="A63C41620FB44F7F85E60B8A7D4916FB" type="1">
+		<field_ref uuid="994F7BD0FF1E4E92B197524226DDE930" name="newSimilarity">
 			<table_ref uuid="32240A1424464042A489321B9F9954DE" name="TrainingSearch"/>
 		</field_ref>
 	</index>
