@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 """
-BGE-M3 fine-tuning
+BGE-M3 fine-tuning — round 1 (domain adaptation on BAAI/bge-m3)
   - sentence-transformers 3.x + MultipleNegativesRankingLoss (asymmetric)
   - LoRA via PEFT (rank 32, targets query/key/value/dense/intermediate.dense)
+    intermediate.dense included for domain adaptation (FFN encodes domain knowledge)
   - Multi-GPU via torchrun (DDP handled by HF Trainer under the hood)
   - Checkpoints every 100 steps, pushed to HuggingFace
-  - 3 000-row held-out eval split; eval loss logged every 100 steps
+  - 500-row held-out eval split (~7%); eval loss logged every 100 steps
+  - ddp_find_unused_parameters=True required: frozen LoRA base_layer weights
+    never receive gradients; DDP must be told to expect this
 
 Usage (via torchrun in setup_and_run.sh):
   torchrun --nproc_per_node=N train.py <RN> <WORK_DIR> <CKPT_REPO> <HF_DATASET>
@@ -49,14 +52,14 @@ IS_MAIN    = LOCAL_RANK == 0
 # Hyperparameters — tuned for 4 × A100 80GB PCIe
 # Effective batch = PER_DEVICE_BATCH × GRAD_ACCUM × WORLD_SIZE
 #                 = 32 × 1 × 4 = 128
-# Eval split: 3 000 rows held out before training (fixed seed)
+# Eval split: 500 rows held out before training (fixed seed, ~7% of ~7 300 triplets)
 # ─────────────────────────────────────────────────────────────────────────────
 PER_DEVICE_BATCH = 32
 GRAD_ACCUM       = 1
 LEARNING_RATE    = 2e-5
 EPOCHS           = 3
 WARMUP_RATIO     = 0.10
-EVAL_SIZE        = 3_000   # rows held out from the flattened triplet pool
+EVAL_SIZE        = 500     # rows held out from the flattened triplet pool (~7% of ~7 300 triplets)
 
 # LoRA — rank 32 hits the sweet spot between expressiveness and adapter size
 # target_modules uses short names: PEFT matches any layer ending in these names
@@ -215,7 +218,7 @@ def main():
         # Push checkpoints to HuggingFace after each save
         push_to_hub=True,
         hub_model_id=CKPT_REPO,
-        hub_strategy="checkpoint",
+        hub_strategy="every_save",
         hub_token=HF_TOKEN if HF_TOKEN else None,
 
         # Logging
