@@ -7,14 +7,15 @@ $client:=cs:C1710.AIKit.OpenAI.new({baseURL: "http://127.0.0.1:"+String:C10(Stor
 var $params : cs:C1710.AIKit.OpenAIEmbeddingsParameters
 $params:=cs:C1710.AIKit.OpenAIEmbeddingsParameters.new({dimensions: 1024})
 
-var $provider; $model : Text
+var $provider; $model; $oldModel : Text
 $provider:="llama.cpp"
-$model:="bge-m3-r6"
+$model:="bge-m3-r1"
+$oldModel:=$model
 
 var $passages : cs:C1710.PassageSelection
 $passages:=ds:C1482.Passage.query("meta.provider == :1"+\
-" and meta.model == :2"; $provider; $model)
-//102870(any), 5320 (searchable)
+" and meta.model == :2"; $provider; $oldModel)
+//58563
 
 var $batch : Object
 
@@ -29,11 +30,11 @@ While ($_passages.length#0)
 		For each ($passage; $_passages)
 			$passage.meta.model:=$model
 			$passage.embeddings:=$embeddings.shift().embedding
-			//$passage.save()
+			$passage.save()
 			For each ($vector; $passage.vectors)
 				$vector.meta.model:=$model
 				$vector.similarity:=$vector.embeddings.cosineSimilarity($passage.embeddings)
-				//$vector.save()
+				$vector.save()
 			End for each 
 		End for each 
 	End if 

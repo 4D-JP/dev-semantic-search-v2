@@ -7,10 +7,10 @@ ARRAY LONGINT:C221($len; 0)
 
 var $provider; $model : Text
 $provider:="llama.cpp"
-$model:="bge-m3"
+$model:="bge-m3-r1"
 
 var $Rn : Text
-$Rn:="r1"
+$Rn:="r2"
 
 var $folder : 4D:C1709.Folder
 $folder:=Folder:C1567([""; "DATA"; "dataset"; $Rn].join("/"))
@@ -32,7 +32,7 @@ var $top_k : Integer
 var $negativeThreshold; $positiveThreshold; $hardNegativeThreshold : Real
 
 Case of 
-	: ($Rn="r1")
+	: ($Rn="r2")
 		$hardNegativeThreshold:=0.65
 		$top_k:=7
 		$negativeThreshold:=0.65

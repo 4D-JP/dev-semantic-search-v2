@@ -3,12 +3,12 @@
 MESSAGES OFF:C175
 
 var $provider; $model : Text
-//$provider:="OpenAI"
-//$model:="text-embedding-3-small"
+$provider:="OpenAI"
+$model:="text-embedding-3-small"
 //$provider:="llama.cpp"
 //$model:="bge-m3"
 $provider:="llama.cpp"
-$model:="bge-m3-r6"
+$model:="bge-m3-r1"
 
 var $stats : Collection
 $stats:=["|BM@10|NDCG@10"]
@@ -31,9 +31,9 @@ $searches:=ds:C1482.Search.query("positive ==:1"+\
 
 /*
 OpenAI
-11346
+ 7770
 BGE M3
-15950
+10353
 */
 
 var $sampleSize : Integer
@@ -43,36 +43,23 @@ $searches:=$searches.slice(0; $sampleSize)
 var $all : cs:C1710.PassageSelection
 $all:=ds:C1482.Passage.query("meta.provider == :1"+\
 " and meta.model == :2"+\
-" and meta.type == :3"; $provider; $model; "train")
+" and meta.type == :3"; $provider; $model; "@")
 
 /*
+
 OpenAI
 {
-  train: 44310
-  test : 14328 
+  train: 30310
+  test : 10665 
   null : 17335
-}
+} 40975
 
 BGE M3
 {
-  train: 66122
-  test : 17072 
-  null : 24996 (neither train nor test)
-} 108190 
-
-BGE M3 r1
-{
-  train: 66122
-  test : 17072 
-  null : 24996 (neither train nor test)
-} 108190
-
-BGE M3 r6
-{
-  train: 66122 (53790)
-  test : 17072
-  null : 24993
-} 108190
+  train: 34894
+  test : 11521 
+  null : 24996
+} 46415 
 
 */
 
@@ -114,45 +101,10 @@ SET TEXT TO PASTEBOARD:C523($stats.join("\n"))
 
 /*
 
-@test
-
-OpenAI|0.722222|0.586204|
-M3    |0.781818|0.586923|
-r6    |0.837617|0.628939|
-
-|BM@10|NDCG@10
-|-:|-:
-|0.000000|0.000000|
-
-------|--------|--------|
-r1    |0.881504|0.663531|  symmetric rank loss
-r5    |0.862068|0.628188| asymmetric rank loss
-r2    |0.903448|0.728600| overfitting, see @full
-r3    |0.776175|0.557011| overfitting, see @full
-
-multiple negative symmetric rank loss 
-risks hurting the model by producing noise in the reverse direction
-the model may seem to perform on limit tasks
-but its general ability to match sentence to sentence might be damaged.
-
 @full (test+train)
 
-OpenAI|0.665784|0.538284|
-M3    |0.715987|0.534895|
-r6    |0.770532|0.573282|
-------|--------|--------|
-r1    |0.811912|0.601433| representation collapse?
-r5    |0.785579|0.563636|
-r2    |0.728526|0.523571|  
-r3    |0.678369|0.475100| 
-
-sometimes there are no genuine signals
-that makes a passage relevant to the query.
-
-encoder-only embedding models (be-encoder)
-can't be trained on semantic similarities that don't exist.
-
-the remaining uncaught passages likely belong to that category.
-i.e. embedding model alone will not reach 100% retrieval.
+OpenAI|0.727155|0.593400|
+BGE M3|0.778743|0.590327|
+r1    |0.845410|0.643336|
 
 */

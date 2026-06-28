@@ -1,6 +1,6 @@
 //%attributes = {}
 var $Rn : Text
-$Rn:="r7"
+$Rn:="r1"
 
 var $folder : 4D:C1709.Folder
 $folder:=Folder:C1567([""; "DATA"; "dataset"; $Rn].join("/"))
@@ -92,9 +92,17 @@ If ($lines.length#0)
 End if 
 
 var $posAvg; $negAvg : Real
-$posAvg:=$posRow.average()  //1
-$negAvg:=$negRow.average()  //1.855138328694
+$posAvg:=$posRow.average()
+$negAvg:=$negRow.average()
 
 var $totalRows; $prunedRows : Integer
-$totalRows:=$posRow.length  //52809
-$prunedRows:=$allRecords.length-$totalRows  //0
+$totalRows:=$posRow.length
+$prunedRows:=$allRecords.length-$totalRows
+
+/*
+r1
+$posAvg   : 1.0
+$negAvg   : 2.125862586259
+$totalRows: 19998
+
+*/

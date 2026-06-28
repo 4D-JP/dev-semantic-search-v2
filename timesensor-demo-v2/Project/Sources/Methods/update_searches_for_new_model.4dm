@@ -9,8 +9,8 @@ $params:=cs:C1710.AIKit.OpenAIEmbeddingsParameters.new({dimensions: 1024})
 
 var $provider; $model; $oldModel : Text
 $provider:="llama.cpp"
-$model:="bge-m3-r6"
-$oldModel:="bge-m3-r6"
+$model:="bge-m3-r1"
+$oldModel:=$model
 
 $models:=ds:C1482.Vector.all().distinct("meta.model")
 //["bge-m3","bge-m3-r5","text-embedding-3-small"]
@@ -18,7 +18,7 @@ $models:=ds:C1482.Vector.all().distinct("meta.model")
 var $searches : cs:C1710.SearchSelection
 $searches:=ds:C1482.Search.query("vectors.meta.provider == :1"+\
 " and vectors.meta.model == :2"; $provider; $oldModel)
-//31900
+//20706
 
 var $batch : Object
 
@@ -35,7 +35,7 @@ While ($_searches.length#0)
 		For each ($passage; $passages)
 			$passage.meta.model:=$model
 			$passage.embeddings:=$embeddings.shift().embedding
-			//$passage.save()
+			$passage.save()
 		End for each 
 	End if 
 	$batch:=$client.embeddings.create($_searches.text; $model; $params)
@@ -45,7 +45,7 @@ While ($_searches.length#0)
 			$vector.meta.model:=$model
 			$vector.embeddings:=$embeddings.shift().embedding
 			$vector.similarity:=$vector.embeddings.cosineSimilarity($vector.passage.embeddings)
-			//$vector.save()
+			$vector.save()
 		End for each 
 	End if 
 	$i+=$length
