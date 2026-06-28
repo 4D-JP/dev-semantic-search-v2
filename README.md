@@ -154,9 +154,9 @@ NDCG@10 is the more demanding of the two metrics. A model can achieve a high HR@
 
 | Model | HR@10 | NDCG@10 |
 |---|---|---|
-| OpenAI text-embedding-3-small (1024 dim) | 0.7272 | 0.5934 |
-| BGE-M3 (original, no fine-tuning) | 0.7787 | 0.5903 |
-| BGE-M3 r1 (this run) | **0.8454** | **0.6433** |
+| OpenAI text-embedding-3-small (1024 dim) | `0.7272` | `0.5934` |
+| BGE-M3 (original, no fine-tuning) | `0.7787` | `0.5903` |
+| BGE-M3 r1 (this run) | **`0.8454`** | **`0.6433`** |
 
 The fine-tuned r1 model improves substantially on both metrics relative to both baselines. Compared to the original BGE-M3:
 
@@ -233,8 +233,8 @@ The improved HR@10 and NDCG@10 scores are encouraging, but a higher hit rate alo
 
 | Pair type | Mean cosine similarity drift |
 |---|---|
-| Positive pairs | −0.1211 |
-| Negative pairs | −0.1410 |
+| Positive pairs | `−0.1211` |
+| Negative pairs | `−0.1410` |
 
 Both positive and negative similarities have shifted downward after fine-tuning. This is an expected consequence of training with MNRL on a domain-specific corpus: when all documents are drawn from a narrow domain (legal text), the overall similarity landscape is compressed — passages that would have appeared highly similar to a general model are now distinguished more finely, and the entire distribution shifts.
 
