@@ -16,13 +16,13 @@ var $URL : Text
 
 $homeFolder:=Folder:C1567(fk home folder:K87:24).folder(".GGUF")
 
-$folder:=$homeFolder.folder("bge-m3")
-$path:="bge-m3-Q8_0.gguf"
-$URL:="keisuke-miyako/bge-m3-gguf-q8_0"
+//$folder:=$homeFolder.folder("bge-m3")
+//$path:="bge-m3-Q8_0.gguf"
+//$URL:="keisuke-miyako/bge-m3-gguf-q8_0"
 
-//$folder:=$homeFolder.folder("timesensor-ai")
-//$path:="bge-m3-lemur-r4-q8_0.gguf"
-//$URL:="keisuke-miyako/bge-m3-lemur-r4-gguf"
+$folder:=$homeFolder.folder("timesensor-ai")
+$path:="bge-m3-lemur-r1-q8_0.gguf"
+$URL:="keisuke-miyako/bge-m3-lemur-r1-gguf"
 
 //$folder:=$homeFolder.folder("GPT")
 //$path:="cl100k_tokenizer.gguf"
