@@ -233,8 +233,8 @@ The improved HR@10 and NDCG@10 scores are encouraging, but a higher hit rate alo
 
 | Pair type | Mean cosine similarity drift |
 |---|---|
-| Positive pairs | `−0.1211` |
-| Negative pairs | `−0.1410` |
+| Positive pairs | `-0.1210888110405` |
+| Negative pairs | `-0.1409832001499` |
 
 Both positive and negative similarities have shifted downward after fine-tuning. This is an expected consequence of training with MNRL on a domain-specific corpus: when all documents are drawn from a narrow domain (legal text), the overall similarity landscape is compressed — passages that would have appeared highly similar to a general model are now distinguished more finely, and the entire distribution shifts.
 
