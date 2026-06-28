@@ -105,7 +105,7 @@ The regex `(?:[^|]+\|){20,}` matches any sequence of 20 or more non-pipe segment
 
 Removing this category reduces dataset size but increases the proportion of examples carrying genuine textual signal. The expected outcome is a more meaningful loss floor, reduced gradient noise during training, and improved retrieval quality on text-based queries — even if raw loss metrics appear higher due to the removal of examples the model could previously satisfy trivially.
 
-# LoRA Fine-Tuning Report: BGE-M3 for Legal Document Retrieval
+---
 
 **Model:** BAAI/bge-m3  
 **Round:** r1  
