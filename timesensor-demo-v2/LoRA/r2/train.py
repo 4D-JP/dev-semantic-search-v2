@@ -32,10 +32,10 @@ log = logging.getLogger(__name__)
 
 # ── Args ──────────────────────────────────────────────────────────────────────
 HF_USER="keisuke-miyako"
-RN         = sys.argv[1] if len(sys.argv) > 1 else "r6"
+RN         = sys.argv[1] if len(sys.argv) > 1 else "r2"
 WORK_DIR   = sys.argv[2] if len(sys.argv) > 2 else f"/workspace/bge_m3/{RN}"
 CKPT_REPO  = sys.argv[3] if len(sys.argv) > 3 else f"{HF_USER}/bge-m3-lemur-{RN}-checkpoints"
-HF_DATASET = sys.argv[4] if len(sys.argv) > 4 else f"{HF_USER}/bge-m3-lemur-r3"
+HF_DATASET = sys.argv[4] if len(sys.argv) > 4 else f"{HF_USER}/bge-m3-lemur-r2"
 HF_TOKEN   = os.environ.get("HF_TOKEN", "")
 
 ADAPTER_DIR = os.path.join(WORK_DIR, "adapter")
@@ -66,7 +66,7 @@ EVAL_SIZE        = 500     # rows held out from the flattened triplet pool (~7% 
 LORA_R           = 32
 LORA_ALPHA       = 64
 LORA_DROPOUT     = 0.05
-LORA_TARGETS     = ["query", "key", "value", "dense", "intermediate.dense"]
+LORA_TARGETS     = ["query", "key", "value", "dense"]
 MNRL_SCALE       = 20  
 
 def make_training_pairs(example):
@@ -152,7 +152,7 @@ def main():
         log.info("Loading merged model ...")
 
     model = SentenceTransformer(
-        f"BAAI/bge-m3",
+        f"{HF_USER}/bge-m3-lemur-r1-merged",
         model_kwargs={"torch_dtype": torch.bfloat16},
     )
 
@@ -271,7 +271,7 @@ Dataset: [{HF_DATASET}](https://huggingface.co/datasets/{HF_DATASET})
 ```python
 from peft import PeftModel
 from transformers import AutoModel
-base = AutoModel.from_pretrained("BAAI/bge-m3")
+base = AutoModel.from_pretrained("{HF_USER}/bge-m3-lemur-r1-merged")
 model = PeftModel.from_pretrained(base, "{HF_USER}/bge-m3-lemur-{RN}-adapter")
 ```
 """)

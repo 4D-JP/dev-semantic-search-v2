@@ -1,12 +1,12 @@
 #!/bin/bash
 # =============================================================================
 #  BGE-M3 Fine-Tuning — Full Pipeline
-#  Usage: bash setup_and_run.sh r4
+#  Usage: bash setup_and_run.sh r2
 #  Requires env vars: HF_TOKEN, RUNPOD_API_KEY
 # =============================================================================
 set -euo pipefail
 
-RN="${1:-r4}"
+RN="${1:-r2}"
 HF_USER="keisuke-miyako"
 HF_DATASET="${HF_USER}/bge-m3-lemur-${RN}"
 ADAPTER_REPO="${HF_USER}/bge-m3-lemur-${RN}-adapter"
@@ -441,10 +441,10 @@ from peft import PeftModel
 
 adapter = "${ADAPTER_DIR}"
 merged  = "${MERGED_DIR}"
-BASE_MODEL = "${HF_USER}/bge-m3-lemur-r6-merged"
-print(f"Loading base {BASE_MODEL} ...")
-tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL)
-base = AutoModel.from_pretrained(BASE_MODEL, torch_dtype=torch.bfloat16)
+BASE_MODEL = "${HF_USER}/bge-m3-lemur-r1-merged"
+print(f"Loading fine-tuned BAAI/bge-m3 ...")
+tokenizer = AutoTokenizer.from_pretrained("${HF_USER}/bge-m3-lemur-r1-merged")
+base = AutoModel.from_pretrained("${HF_USER}/bge-m3-lemur-r1-merged", torch_dtype=torch.bfloat16)
 
 # Sanity: record a weight before merge
 ref_w = base.encoder.layer[0].attention.self.query.weight.detach().clone()
@@ -485,7 +485,7 @@ for fn in ["sentence_bert_config.json", "1_Pooling/config.json"]:
         print(f"  ✓ copied {fn}")
     except Exception as e:
         print(f"  WARNING: could not copy {fn}: {e}")
-
+        
 print(f"✓ Merged model saved to {merged}")
 PYEOF
 
@@ -504,7 +504,7 @@ echo "✓ GGUF saved: ${GGUF_PATH} (${SIZE_MB} MB)"
 # Create a model card for the GGUF repo
 cat > "${GGUF_DIR}/README.md" <<EOF
 ---
-base_model: ${HF_USER}/bge-m3-lemur-${RN}-merged
+base_model: BAAI/bge-m3
 tags:
   - lemur
   - embeddings
