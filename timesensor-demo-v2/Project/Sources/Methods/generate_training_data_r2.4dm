@@ -33,9 +33,9 @@ var $negativeThreshold; $positiveThreshold; $hardNegativeThreshold : Real
 
 Case of 
 	: ($Rn="r2")
-		$hardNegativeThreshold:=0.65
+		$hardNegativeThreshold:=0.45
 		$top_k:=7
-		$negativeThreshold:=0.65
+		$negativeThreshold:=0.5
 		$positiveThreshold:=0.85
 End case 
 
@@ -43,8 +43,8 @@ $passages:=ds:C1482.Passage.query("meta.provider == :1 and meta.model == :2"; $p
 
 //some queries are identical
 var $hashes : Collection
-$hashes:=ds:C1482.TrainingSearch.query("meta.provider == :1 and meta.model == :2"; $provider; $model).distinct("hash")
-//58563
+$hashes:=ds:C1482.TrainingSearch.query("meta.provider == :1 and meta.newModel == :2"; $provider; $model).distinct("hash")
+//58563,60684
 
 While ($count*$batch<$hashes.length)
 	var $subFolder : 4D:C1709.Folder
@@ -90,7 +90,8 @@ find queries with a positive match
 		End for each 
 		var $search : cs:C1710.TrainingSearchEntity
 		For each ($search; $searches)
-			var $comparison:={vector: $search.passage.embeddings; metric: mk cosine:K95:1; threshold: $hardNegativeThreshold}
+			var $comparisonA:={vector: $search.passage.embeddings; metric: mk cosine:K95:1; threshold: $hardNegativeThreshold}
+			var $comparisonB:={vector: $search.embeddings; metric: mk cosine:K95:1; threshold: $hardNegativeThreshold}
 			var $negativePassages : cs:C1710.PassageSelection
 /*
 find negatives from passages
@@ -103,10 +104,19 @@ exclude negative dup
 				"    and not(DocumentID in :2)"+\
 				"    and not(hash in :3)"+\
 				"    and not(hash in :4)"; \
-				$comparison; \
+				$comparisonA; \
 				$documentIds; \
 				$positiveHashes; \
 				$negativeHashes)
+			
+			$negativePassages:=$negativePassages.or($passages.query("embeddings > :1"+\
+				"    and not(DocumentID in :2)"+\
+				"    and not(hash in :3)"+\
+				"    and not(hash in :4)"; \
+				$comparisonB; \
+				$documentIds; \
+				$positiveHashes; \
+				$negativeHashes))
 			
 			If ($negativePassages.length=0)
 				//no hard negatives
