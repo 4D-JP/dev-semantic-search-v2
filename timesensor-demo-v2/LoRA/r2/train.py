@@ -56,8 +56,8 @@ IS_MAIN    = LOCAL_RANK == 0
 # ─────────────────────────────────────────────────────────────────────────────
 PER_DEVICE_BATCH = 32
 GRAD_ACCUM       = 1
-LEARNING_RATE    = 2e-5
-EPOCHS           = 3
+LEARNING_RATE    = 1e-5 # 2e-5
+EPOCHS           = 2 # 3
 WARMUP_RATIO     = 0.10
 EVAL_SIZE        = 500     # rows held out from the flattened triplet pool (~7% of ~7 300 triplets)
 
@@ -65,9 +65,9 @@ EVAL_SIZE        = 500     # rows held out from the flattened triplet pool (~7% 
 # target_modules uses short names: PEFT matches any layer ending in these names
 LORA_R           = 32
 LORA_ALPHA       = 64
-LORA_DROPOUT     = 0.05
+LORA_DROPOUT     = 0.10 # 0.05
 LORA_TARGETS     = ["query", "key", "value", "dense"]
-MNRL_SCALE       = 20  
+MNRL_SCALE       = 16 # 20  
 
 def make_training_pairs(example):
     """
