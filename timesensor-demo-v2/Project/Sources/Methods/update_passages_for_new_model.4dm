@@ -9,8 +9,8 @@ $params:=cs:C1710.AIKit.OpenAIEmbeddingsParameters.new({dimensions: 1024})
 
 var $provider; $model; $oldModel : Text
 $provider:="llama.cpp"
-$model:="bge-m3-r1"
-$oldModel:=$model
+$model:="bge-m3-r2"
+$oldModel:="bge-m3-r1"
 
 var $passages : cs:C1710.PassageSelection
 $passages:=ds:C1482.Passage.query("meta.provider == :1"+\

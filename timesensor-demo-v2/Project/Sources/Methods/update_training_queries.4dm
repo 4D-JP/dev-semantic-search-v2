@@ -22,7 +22,7 @@ var $client : cs:C1710.AIKit.OpenAI
 $client:=cs:C1710.AIKit.OpenAI.new({baseURL: "http://127.0.0.1:"+String:C10(Storage:C1525.port.embeddings)+"/v1"})
 
 var $model : Text
-$model:="bge-m3-r1"
+$model:="bge-m3-r2"
 var $params : cs:C1710.AIKit.OpenAIEmbeddingsParameters
 $params:=cs:C1710.AIKit.OpenAIEmbeddingsParameters.new()
 

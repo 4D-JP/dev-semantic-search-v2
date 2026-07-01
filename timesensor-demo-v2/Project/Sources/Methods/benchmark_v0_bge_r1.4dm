@@ -8,7 +8,7 @@ $model:="text-embedding-3-small"
 //$provider:="llama.cpp"
 //$model:="bge-m3"
 $provider:="llama.cpp"
-$model:="bge-m3-r1"
+$model:="bge-m3-r2"
 
 var $stats : Collection
 $stats:=["|BM@10|NDCG@10"]
@@ -37,8 +37,8 @@ BGE M3
 */
 
 var $sampleSize : Integer
-$sampleSize:=$searches.length\10
-$searches:=$searches.slice(0; $sampleSize)
+//$sampleSize:=$searches.length\10
+//$searches:=$searches.slice(0; $sampleSize)
 
 var $all : cs:C1710.PassageSelection
 $all:=ds:C1482.Passage.query("meta.provider == :1"+\
@@ -101,10 +101,21 @@ SET TEXT TO PASTEBOARD:C523($stats.join("\n"))
 
 /*
 
-@full (test+train)
+@full (test+train,10%)
 
+      |BM@10   |NDCG@10 |
+------|--------|--------|
 OpenAI|0.727155|0.593400|
 BGE M3|0.778743|0.590327|
 r1    |0.845410|0.643336|
+r2    |0.904347|0.716485|
+
+@full (test+train,100%)
+      |BM@10   |NDCG@10 |
+------|--------|--------|
+OpenAI|0.670527|0.528276|
+BGE M3|0.746933|0.556364|
+r1    |0.818603|0.620830|
+r2    |0.870375|0.689861|
 
 */

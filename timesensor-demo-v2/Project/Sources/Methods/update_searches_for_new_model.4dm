@@ -9,8 +9,8 @@ $params:=cs:C1710.AIKit.OpenAIEmbeddingsParameters.new({dimensions: 1024})
 
 var $provider; $model; $oldModel : Text
 $provider:="llama.cpp"
-$model:="bge-m3-r1"
-$oldModel:=$model
+$model:="bge-m3-r2"
+$oldModel:="bge-m3-r1"
 
 $models:=ds:C1482.Vector.all().distinct("meta.model")
 //["bge-m3","bge-m3-r5","text-embedding-3-small"]

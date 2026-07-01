@@ -1,6 +1,6 @@
 //%attributes = {}
 var $Rn : Text
-$Rn:="r2"
+$Rn:="r1"
 
 var $folder : 4D:C1709.Folder
 $folder:=Folder:C1567([""; "DATA"; "dataset"; $Rn].join("/"))
@@ -53,7 +53,13 @@ For each ($jsonl; $allRecords)
 	$cleanNeg:=[]
 	$negIndex:=0
 	var $negHash : Text
+	$idx:=0
 	For each ($negHash; $jsonl.neg_hash)
+		$relevance_score:=$jsonl.relevance_score[$idx]
+		$idx+=1
+		If ($relevance_score>0.5)
+			continue
+		End if 
 		var $isPositiveForThisQuery : Boolean
 		$isPositiveForThisQuery:=False:C215
 		If ($passageToQueries[$negHash]#Null:C1517)
@@ -107,7 +113,6 @@ $totalRows: 19998
 
 r2
 $posAvg   : 1.0
-$negAvg   : 1.924987966974
-$totalRows: 27009
-
+$negAvg   : 1.352018257025
+$totalRows: 7011
 */
