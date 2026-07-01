@@ -21,8 +21,8 @@ $homeFolder:=Folder:C1567(fk home folder:K87:24).folder(".GGUF")
 //$URL:="keisuke-miyako/bge-m3-gguf-q8_0"
 
 $folder:=$homeFolder.folder("timesensor-ai")
-$path:="bge-m3-lemur-r1-q8_0.gguf"
-$URL:="keisuke-miyako/bge-m3-lemur-r1-gguf"
+$path:="bge-m3-lemur-r2-q8_0.gguf"
+$URL:="keisuke-miyako/bge-m3-lemur-r2-gguf"
 
 //$folder:=$homeFolder.folder("GPT")
 //$path:="cl100k_tokenizer.gguf"
