@@ -1,14 +1,14 @@
 #!/bin/bash
 # =============================================================================
 #  BGE-M3 Fine-Tuning — Full Pipeline
-#  Usage: bash setup_and_run.sh r2
+#  Usage: bash setup_and_run.sh r1
 #  Requires env vars: HF_TOKEN, RUNPOD_API_KEY
 # =============================================================================
 set -euo pipefail
 
-RN="${1:-r2}"
+RN="${1:-r1}"
 HF_USER="keisuke-miyako"
-HF_DATASET="${HF_USER}/bge-m3-lemur-${RN}"
+HF_DATASET="${HF_USER}/bge-m3-lemur-r1"
 ADAPTER_REPO="${HF_USER}/bge-m3-lemur-${RN}-adapter"
 MERGED_REPO="${HF_USER}/bge-m3-lemur-${RN}-merged"
 GGUF_REPO="${HF_USER}/bge-m3-lemur-${RN}-gguf"
@@ -193,7 +193,7 @@ torchrun \
     --nproc_per_node="${NUM_GPUS}" \
     --master_addr=localhost \
     --master_port=29500 \
-    /workspace/train.py \
+    /workspace/train-r1.py \
         "${RN}" \
         "${WORK_DIR}" \
         "${CKPT_REPO}" \
@@ -441,10 +441,10 @@ from peft import PeftModel
 
 adapter = "${ADAPTER_DIR}"
 merged  = "${MERGED_DIR}"
-BASE_MODEL = "${HF_USER}/bge-m3-lemur-r1-merged"
-print(f"Loading fine-tuned BAAI/bge-m3 ...")
-tokenizer = AutoTokenizer.from_pretrained("${HF_USER}/bge-m3-lemur-r1-merged")
-base = AutoModel.from_pretrained("${HF_USER}/bge-m3-lemur-r1-merged", torch_dtype=torch.bfloat16)
+BASE_MODEL = "BAAI/bge-m3"
+print(f"Loading base BAAI/bge-m3 ...")
+tokenizer = AutoTokenizer.from_pretrained("BAAI/bge-m3")
+base = AutoModel.from_pretrained("BAAI/bge-m3", torch_dtype=torch.bfloat16)
 
 # Sanity: record a weight before merge
 ref_w = base.encoder.layer[0].attention.self.query.weight.detach().clone()

@@ -208,12 +208,12 @@ def main():
 
         # Checkpointing — save every 100 steps, keep last 10
         save_strategy="steps",
-        save_steps=25 # 100,
+        save_steps=25, # 100,
         save_total_limit=10,
 
         # Evaluation — run on held-out split every 100 steps (aligned with save)
         eval_strategy="steps",
-        eval_steps=25 # 100,
+        eval_steps=25, # 100,
 
         # Push checkpoints to HuggingFace after each save
         push_to_hub=True,
